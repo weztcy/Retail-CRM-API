@@ -1,196 +1,76 @@
 import { prisma } from "@/lib/prisma";
 
-import {
-  InventoryType,
-} from "@/generated/prisma/client";
+import { InventoryType } from "@/generated/prisma/client";
 
 import type {
   DashboardFilter,
+  ProductAnalyticsFilter,
+  CustomerAnalyticsFilter,
 } from "./dashboard.types";
 
 // =========================
 // DASHBOARD SUMMARY
 // =========================
 
-export async function getDashboardSummary(
-  filter?: DashboardFilter
-) {
-
-
+export async function getDashboardSummary(filter?: DashboardFilter) {
   const dateFilter = {
-
-
     ...(filter?.startDate && {
-
-      gte:
-        filter.startDate,
-
+      gte: filter.startDate,
     }),
-
-
 
     ...(filter?.endDate && {
-
-      lte:
-        filter.endDate,
-
+      lte: filter.endDate,
     }),
-
-
   };
 
-
-
-  const [
-
-    totalCustomer,
-
-    totalProduct,
-
-    totalTransaction,
-
-    revenue,
-
-
-  ] = await Promise.all([
-
-
-
-    prisma.customer.count({
-
-
-      where: {
-
-
-        ...(Object.keys(dateFilter).length > 0 && {
-
-          createdAt:
-            dateFilter,
-
-        }),
-
-
-      },
-
-
-    }),
-
-
-
-
-
-    prisma.product.count({
-
-
-      where: {
-
-
-        isActive:true,
-
-
-      },
-
-
-    }),
-
-
-
-
-
-
-    prisma.transaction.count({
-
-
-      where:{
-
-
-        ...(Object.keys(dateFilter).length > 0 && {
-
-
-          createdAt:
-            dateFilter,
-
-
-        }),
-
-
-      },
-
-
-    }),
-
-
-
-
-
-
-    prisma.transaction.aggregate({
-
-
-      _sum:{
-
-
-        totalAmount:true,
-
-
-      },
-
-
-
-      where:{
-
-
-        status:
-          "COMPLETED",
-
-
-
-        ...(Object.keys(dateFilter).length > 0 && {
-
-
-          transactionDate:
-            dateFilter,
-
-
-        }),
-
-
-      },
-
-
-    }),
-
-
-
-
-  ]);
-
-
-
-
+  const [totalCustomer, totalProduct, totalTransaction, revenue] =
+    await Promise.all([
+      prisma.customer.count({
+        where: {
+          ...(Object.keys(dateFilter).length > 0 && {
+            createdAt: dateFilter,
+          }),
+        },
+      }),
+
+      prisma.product.count({
+        where: {
+          isActive: true,
+        },
+      }),
+
+      prisma.transaction.count({
+        where: {
+          ...(Object.keys(dateFilter).length > 0 && {
+            createdAt: dateFilter,
+          }),
+        },
+      }),
+
+      prisma.transaction.aggregate({
+        _sum: {
+          totalAmount: true,
+        },
+
+        where: {
+          status: "COMPLETED",
+
+          ...(Object.keys(dateFilter).length > 0 && {
+            transactionDate: dateFilter,
+          }),
+        },
+      }),
+    ]);
 
   return {
-
-
     totalCustomer,
-
 
     totalProduct,
 
-
     totalTransaction,
 
-
-    totalRevenue:
-
-      Number(
-        revenue._sum.totalAmount ?? 0
-      ),
-
-
+    totalRevenue: Number(revenue._sum.totalAmount ?? 0),
   };
-
-
 }
 
 // =========================
@@ -370,34 +250,6 @@ export async function getTopCustomers() {
 }
 
 // =========================
-// MEMBERSHIP DISTRIBUTION
-// =========================
-
-export async function getMembershipDistribution() {
-  const customers = await prisma.customer.findMany({
-    select: {
-      membership: true,
-    },
-  });
-
-  const result = {
-    BRONZE: 0,
-
-    SILVER: 0,
-
-    GOLD: 0,
-
-    PLATINUM: 0,
-  };
-
-  customers.forEach((customer) => {
-    result[customer.membership]++;
-  });
-
-  return result;
-}
-
-// =========================
 // LOYALTY ANALYTICS
 // =========================
 
@@ -503,7 +355,6 @@ export async function getInventoryAnalytics() {
 // =========================
 
 export async function getInventoryHistory(
-
   search?: string,
 
   type?: InventoryType,
@@ -512,269 +363,657 @@ export async function getInventoryHistory(
 
   page: number = 1,
 
-  limit: number = 10
-
+  limit: number = 10,
 ) {
-
-
-  const skip =
-    (page - 1) * limit;
-
-
-
+  const skip = (page - 1) * limit;
 
   const where = {
-
-
     ...(type
-
       ? {
-
           type,
-
         }
-
       : {}),
-
-
 
     ...(search
-
       ? {
-
           OR: [
-
             {
-
               product: {
-
                 sku: {
-
                   contains: search,
-
                 },
-
               },
-
             },
 
-
             {
-
               product: {
-
                 name: {
-
                   contains: search,
-
                 },
-
               },
-
             },
-
 
             {
-
               user: {
-
                 name: {
-
                   contains: search,
-
                 },
-
               },
-
             },
-
-
           ],
-
         }
-
       : {}),
-
-
   };
 
-
-
-
-
   const orderBy =
-
-
     sort === "oldest"
-
       ? {
-
           createdAt: "asc" as const,
-
         }
-
-
       : sort === "quantity_asc"
+        ? {
+            quantity: "asc" as const,
+          }
+        : sort === "quantity_desc"
+          ? {
+              quantity: "desc" as const,
+            }
+          : {
+              createdAt: "desc" as const,
+            };
 
-      ? {
-
-          quantity: "asc" as const,
-
-        }
-
-
-      : sort === "quantity_desc"
-
-      ? {
-
-          quantity: "desc" as const,
-
-        }
-
-
-      : {
-
-          createdAt: "desc" as const,
-
-        };
-
-
-
-
-
-
-
-  const [
-
-    items,
-
-    total,
-
-  ] = await Promise.all([
-
-
-
+  const [items, total] = await Promise.all([
     prisma.inventoryTransaction.findMany({
-
       where,
-
 
       skip,
 
-
       take: limit,
-
 
       orderBy,
 
-
       select: {
-
-
         id: true,
-
 
         type: true,
 
-
         quantity: true,
-
 
         stockBefore: true,
 
-
         stockAfter: true,
-
 
         description: true,
 
-
         createdAt: true,
 
-
-
         product: {
-
           select: {
-
             id: true,
 
             sku: true,
 
             name: true,
-
           },
-
         },
 
-
-
         user: {
-
           select: {
-
             id: true,
 
             name: true,
-
           },
-
         },
-
-
       },
-
-
     }),
-
-
-
-
 
     prisma.inventoryTransaction.count({
-
       where,
-
     }),
-
-
-
   ]);
 
-
-
-
-
-
   return {
-
-
     items,
 
-
-
     pagination: {
-
-
       page,
-
 
       limit,
 
+      total,
+
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+}
+
+// =========================
+// SALES ANALYTICS
+// =========================
+
+export async function getSalesAnalytics(filter?: DashboardFilter) {
+  const dateFilter = {
+    ...(filter?.startDate && {
+      gte: filter.startDate,
+    }),
+
+    ...(filter?.endDate && {
+      lte: filter.endDate,
+    }),
+  };
+
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      status: "COMPLETED",
+
+      ...(Object.keys(dateFilter).length > 0 && {
+        transactionDate: dateFilter,
+      }),
+    },
+
+    select: {
+      totalAmount: true,
+
+      transactionDate: true,
+    },
+
+    orderBy: {
+      transactionDate: "asc",
+    },
+  });
+
+  const result = transactions.reduce(
+    (acc, item) => {
+      const date = item.transactionDate.toISOString().slice(0, 10);
+
+      const existing = acc.find((row) => row.date === date);
+
+      if (existing) {
+        existing.transaction += 1;
+
+        existing.revenue += Number(item.totalAmount);
+      } else {
+        acc.push({
+          date,
+
+          transaction: 1,
+
+          revenue: Number(item.totalAmount),
+        });
+      }
+
+      return acc;
+    },
+
+    [] as {
+      date: string;
+
+      transaction: number;
+
+      revenue: number;
+    }[],
+  );
+
+  return {
+    items: result,
+
+    summary: {
+      totalTransaction: result.reduce(
+        (sum, item) => sum + item.transaction,
+
+        0,
+      ),
+
+      totalRevenue: result.reduce(
+        (sum, item) => sum + item.revenue,
+
+        0,
+      ),
+    },
+  };
+}
+
+// =========================
+// PRODUCT ANALYTICS
+// =========================
+
+export async function getProductAnalytics(filter?: ProductAnalyticsFilter) {
+  const page = filter?.page ?? 1;
+
+  const limit = filter?.limit ?? 10;
+
+  const skip = (page - 1) * limit;
+
+  const dateFilter = {
+    ...(filter?.startDate && {
+      gte: filter.startDate,
+    }),
+
+    ...(filter?.endDate && {
+      lte: filter.endDate,
+    }),
+  };
+
+  const items = await prisma.transactionItem.findMany({
+    where: {
+      transaction: {
+        status: "COMPLETED",
+
+        ...(Object.keys(dateFilter).length > 0 && {
+          transactionDate: dateFilter,
+        }),
+      },
+
+      ...(filter?.search && {
+        product: {
+          OR: [
+            {
+              name: {
+                contains: filter.search,
+              },
+            },
+
+            {
+              sku: {
+                contains: filter.search,
+              },
+            },
+          ],
+        },
+      }),
+    },
+
+    select: {
+      quantity: true,
+
+      subtotal: true,
+
+      product: {
+        select: {
+          id: true,
+
+          sku: true,
+
+          name: true,
+        },
+      },
+    },
+  });
+
+  const grouped = items.reduce(
+    (acc, item) => {
+      const existing = acc.find((row) => row.productId === item.product.id);
+
+      if (existing) {
+        existing.totalSold += item.quantity;
+
+        existing.revenue += Number(item.subtotal);
+      } else {
+        acc.push({
+          productId: item.product.id,
+
+          sku: item.product.sku,
+
+          name: item.product.name,
+
+          totalSold: item.quantity,
+
+          revenue: Number(item.subtotal),
+        });
+      }
+
+      return acc;
+    },
+
+    [] as {
+      productId: string;
+
+      sku: string;
+
+      name: string;
+
+      totalSold: number;
+
+      revenue: number;
+    }[],
+  );
+
+  if (filter?.sort === "quantity_asc") {
+    grouped.sort((a, b) => a.totalSold - b.totalSold);
+  } else if (filter?.sort === "revenue_desc") {
+    grouped.sort((a, b) => b.revenue - a.revenue);
+  } else if (filter?.sort === "revenue_asc") {
+    grouped.sort((a, b) => a.revenue - b.revenue);
+  } else {
+    grouped.sort((a, b) => b.totalSold - a.totalSold);
+  }
+
+  const total = grouped.length;
+
+  return {
+    items: grouped.slice(skip, skip + limit),
+
+    pagination: {
+      page,
+
+      limit,
 
       total,
 
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+}
+
+// =========================
+// CUSTOMER ANALYTICS
+// =========================
+
+export async function getCustomerAnalytics(
+ filter?: CustomerAnalyticsFilter
+){
 
 
-      totalPages:
+ const page =
+   filter?.page ?? 1;
 
-        Math.ceil(total / limit),
+
+ const limit =
+   filter?.limit ?? 10;
+
+
+ const skip =
+   (page - 1) * limit;
+
+
+
+ const dateFilter = {
+
+
+   ...(filter?.startDate && {
+
+     gte:
+       filter.startDate,
+
+   }),
+
+
+   ...(filter?.endDate && {
+
+     lte:
+       filter.endDate,
+
+   }),
+
+
+ };
+
+
+
+
+
+ const where = {
+
+
+   ...(filter?.membership && {
+
+     membership:
+       filter.membership,
+
+   }),
+
+
+
+   ...(filter?.search && {
+
+
+     OR:[
+
+
+       {
+
+        name:{
+          contains:
+            filter.search,
+        },
+
+       },
+
+
+       {
+
+        phone:{
+          contains:
+            filter.search,
+        },
+
+       },
+
+
+       {
+
+        customerCode:{
+          contains:
+            filter.search,
+        },
+
+       },
+
+
+     ],
+
+
+   }),
+
+
+
+   ...(Object.keys(dateFilter).length > 0 && {
+
+
+      createdAt:
+        dateFilter,
+
+
+   }),
+
+
+ };
+
+
+
+
+
+ const [
+
+  customers,
+
+  total,
+
+  totalCustomer,
+
+  activeCustomer,
+
+ ] = await Promise.all([
+
+
+
+   prisma.customer.findMany({
+
+
+    where,
+
+
+    skip,
+
+
+    take:limit,
+
+
+    orderBy:
+
+      filter?.sort === "spent_asc"
+
+      ?
+
+      {
+        totalSpent:"asc"
+      }
+
+      :
+
+      filter?.sort === "latest"
+
+      ?
+
+      {
+        createdAt:"desc"
+      }
+
+      :
+
+      {
+        totalSpent:"desc"
+      },
+
+
+    select:{
+
+
+      id:true,
+
+      customerCode:true,
+
+      name:true,
+
+      phone:true,
+
+      membership:true,
+
+      totalSpent:true,
+
+      createdAt:true,
 
 
     },
 
 
-  };
+   }),
+
+
+
+
+   prisma.customer.count({
+
+    where,
+
+   }),
+
+
+
+
+
+   prisma.customer.count(),
+
+
+
+
+
+   prisma.customer.count({
+
+    where:{
+      isActive:true
+    }
+
+   }),
+
+
+
+ ]);
+
+
+
+
+
+ const membership =
+ {
+
+   BRONZE:0,
+
+   SILVER:0,
+
+   GOLD:0,
+
+   PLATINUM:0,
+
+ };
+
+
+
+
+ const memberships =
+   await prisma.customer.findMany({
+
+    select:{
+      membership:true
+    }
+
+   });
+
+
+
+
+ memberships.forEach(
+  item=>{
+
+   membership[item.membership]++;
+
+  }
+ );
+
+
+
+
+
+ return {
+
+
+  summary:{
+
+
+   totalCustomer,
+
+
+   activeCustomer,
+
+
+  },
+
+
+  membership,
+
+
+
+  items:customers,
+
+
+
+  pagination:{
+
+
+    page,
+
+    limit,
+
+    total,
+
+    totalPages:
+      Math.ceil(total/limit),
+
+
+  },
+
+
+ };
 
 
 }

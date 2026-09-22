@@ -454,17 +454,52 @@ export async function updateTransactionStatus(
       // ROLLBACK CUSTOMER SPENDING
       // =========================
 
-      await tx.customer.update({
-        where: {
-          id: transaction.customerId,
-        },
+      const customer =
+  await tx.customer.findUnique({
 
-        data: {
-          totalSpent: {
-            decrement: transaction.totalAmount,
-          },
-        },
-      });
+    where:{
+      id:transaction.customerId
+    }
+
+  });
+
+
+if(customer){
+
+
+ const newTotal =
+   Number(customer.totalSpent)
+   -
+   Number(transaction.totalAmount);
+
+
+
+ await tx.customer.update({
+
+  where:{
+    id:transaction.customerId
+  },
+
+
+  data:{
+
+
+    totalSpent:
+
+      newTotal < 0
+
+      ? 0
+
+      : newTotal
+
+
+  }
+
+
+ });
+
+
+}
 
       // =========================
       // ROLLBACK LOYALTY POINT
