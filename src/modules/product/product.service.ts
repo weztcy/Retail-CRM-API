@@ -18,10 +18,45 @@ import type {
 // GET PRODUCTS
 // =========================
 
-export async function getProducts() {
+export async function getProducts(
+  search?: string
+) {
 
 
   return await prisma.product.findMany({
+
+
+    where: search
+      ? {
+
+          OR: [
+
+            {
+              sku: {
+                contains: search,
+              },
+            },
+
+
+            {
+              name: {
+                contains: search,
+              },
+            },
+
+
+            {
+              category: {
+                contains: search,
+              },
+            },
+
+          ],
+
+        }
+
+      : undefined,
+
 
 
     orderBy: {
@@ -51,6 +86,8 @@ export async function getProducts() {
 
       updatedAt: true,
 
+      imageUrl: true,
+
     },
 
 
@@ -58,8 +95,6 @@ export async function getProducts() {
 
 
 }
-
-
 
 
 
@@ -99,6 +134,8 @@ export async function getProductById(
 
       isActive: true,
 
+      imageUrl: true,
+
     },
 
 
@@ -106,7 +143,6 @@ export async function getProductById(
 
 
 }
-
 
 
 
@@ -150,6 +186,10 @@ export async function createProduct(
           data.stock ?? 0,
 
 
+        imageUrl:
+          data.imageUrl,
+
+
       },
 
 
@@ -162,9 +202,13 @@ export async function createProduct(
 
         name: true,
 
+        category: true,
+
         price: true,
 
         stock: true,
+
+        imageUrl: true,
 
 
       },
@@ -211,7 +255,6 @@ export async function createProduct(
 
 
 }
-
 
 
 
@@ -304,6 +347,8 @@ export async function updateProduct(
 
         isActive: true,
 
+        imageUrl: true,
+
         updatedAt: true,
 
 
@@ -311,7 +356,6 @@ export async function updateProduct(
 
 
     });
-
 
 
 
@@ -349,13 +393,10 @@ export async function updateProduct(
 
 
 
-
   return updatedProduct;
 
 
 }
-
-
 
 
 
@@ -487,7 +528,6 @@ export async function deleteProduct(
 
 
   });
-
 
 
 

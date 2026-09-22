@@ -46,21 +46,34 @@ export async function GET(
 
     await requireRole(
 
-  request,
+      request,
 
-  [
-    "SUPER_ADMIN",
-    "ADMIN",
-    "MANAGER",
-    "SALES"
-  ]
+      [
+        "SUPER_ADMIN",
+        "ADMIN",
+        "MANAGER",
+        "SALES"
+      ]
 
-);
+    );
+
+
+
+    const { searchParams } =
+      new URL(request.url);
+
+
+
+    const search =
+      searchParams.get("search")
+      ?? undefined;
 
 
 
     const products =
-      await getProducts();
+      await getProducts(
+        search
+      );
 
 
 
@@ -86,10 +99,6 @@ export async function GET(
 
 
 }
-
-
-
-
 
 // =========================
 // CREATE PRODUCT

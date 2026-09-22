@@ -10,6 +10,9 @@ export interface CreateProductInput {
   category: string;
 
 
+  imageUrl?: string;
+
+
   price: number;
 
 
@@ -27,6 +30,9 @@ export interface UpdateProductInput {
 
 
   category?: string;
+
+
+  imageUrl?: string;
 
 
   price?: number;

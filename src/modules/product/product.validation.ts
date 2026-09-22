@@ -46,13 +46,18 @@ z.object({
 
 
   stock: z
-    .number()
-    .int()
-    .min(
-      0,
-      "Stock tidak boleh negatif"
-    )
-    .optional(),
+  .number()
+  .int()
+  .min(
+    0,
+    "Stock tidak boleh negatif"
+  )
+  .optional(),
+
+
+imageUrl: z
+  .string()
+  .optional(),
 
 
 });
@@ -96,8 +101,13 @@ z.object({
 
 
   isActive: z
-    .boolean()
-    .optional(),
+  .boolean()
+  .optional(),
+
+
+imageUrl: z
+  .string()
+  .optional(),
 
 
 });

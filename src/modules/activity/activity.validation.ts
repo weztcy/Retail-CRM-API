@@ -1,12 +1,25 @@
 import { z } from "zod";
 
 
-
 // =========================
 // CREATE ACTIVITY
 // =========================
 
 export const createActivitySchema = z.object({
+
+  customerId: z
+    .string()
+    .uuid(
+      "Customer ID tidak valid"
+    ),
+
+
+  userId: z
+    .string()
+    .uuid(
+      "User ID tidak valid"
+    ),
+
 
   type: z.enum([
 
@@ -27,7 +40,10 @@ export const createActivitySchema = z.object({
 
   subject: z
     .string()
-    .min(3),
+    .min(
+      3,
+      "Subject minimal 3 karakter"
+    ),
 
 
   description: z
@@ -45,7 +61,6 @@ export const createActivitySchema = z.object({
 export const updateActivitySchema =
 z.object({
 
-
   status: z.enum([
 
     "PENDING",
@@ -58,7 +73,6 @@ z.object({
 
   ]),
 
-
 });
 
 
@@ -70,13 +84,11 @@ z.object({
 export const activityIdSchema =
 z.object({
 
-
   id: z
     .string()
     .uuid(
       "Activity ID tidak valid"
     ),
-
 
 });
 
@@ -89,12 +101,10 @@ z.object({
 export const activityCustomerIdSchema =
 z.object({
 
-
   customerId: z
     .string()
     .uuid(
       "Customer ID tidak valid"
     ),
-
 
 });

@@ -20,14 +20,13 @@ import {
 
 
 
+
 // =========================
 // CREATE ACTIVITY
 // =========================
 
 export async function POST(
-
   request: Request
-
 ) {
 
 
@@ -36,6 +35,7 @@ export async function POST(
 
     const body =
       await request.json();
+
 
 
 
@@ -50,12 +50,32 @@ export async function POST(
 
 
 
+
     const activity =
-      await createActivity(
+      await createActivity({
 
-        data
+        customerId:
+          data.customerId,
 
-      );
+
+        userId:
+          data.userId,
+
+
+        type:
+          data.type,
+
+
+        subject:
+          data.subject,
+
+
+        description:
+          data.description,
+
+      });
+
+
 
 
 
@@ -78,5 +98,6 @@ export async function POST(
 
 
   }
+
 
 }
