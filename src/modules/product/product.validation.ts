@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 
-
 // =========================
 // CREATE PRODUCT
 // =========================
@@ -9,14 +8,12 @@ import { z } from "zod";
 export const createProductSchema =
 z.object({
 
-
   sku: z
     .string()
     .min(
       3,
       "SKU minimal 3 karakter"
     ),
-
 
 
   name: z
@@ -27,14 +24,12 @@ z.object({
     ),
 
 
-
   category: z
     .string()
     .min(
       2,
       "Kategori wajib diisi"
     ),
-
 
 
   price: z
@@ -44,21 +39,23 @@ z.object({
     ),
 
 
-
   stock: z
-  .number()
-  .int()
-  .min(
-    0,
-    "Stock tidak boleh negatif"
-  )
-  .optional(),
+    .number()
+    .int()
+    .min(
+      0,
+      "Stock tidak boleh negatif"
+    )
+    .optional(),
 
 
-imageUrl: z
-  .string()
-  .optional(),
-
+  imageUrl: z
+    .string()
+    .startsWith(
+      "/uploads/",
+      "Image URL tidak valid"
+    )
+    .optional(),
 
 });
 
@@ -72,22 +69,31 @@ imageUrl: z
 export const updateProductSchema =
 z.object({
 
-
   name: z
     .string()
+    .min(
+      3,
+      "Nama produk minimal 3 karakter"
+    )
     .optional(),
 
 
 
   category: z
     .string()
+    .min(
+      2,
+      "Kategori wajib diisi"
+    )
     .optional(),
 
 
 
   price: z
     .number()
-    .positive()
+    .positive(
+      "Harga harus lebih dari 0"
+    )
     .optional(),
 
 
@@ -95,19 +101,21 @@ z.object({
   stock: z
     .number()
     .int()
-    .min(0)
+    .min(
+      0,
+      "Stock tidak boleh negatif"
+    )
     .optional(),
 
 
 
-  isActive: z
-  .boolean()
-  .optional(),
-
-
-imageUrl: z
-  .string()
-  .optional(),
+  imageUrl: z
+    .string()
+    .startsWith(
+      "/uploads/",
+      "Image URL tidak valid"
+    )
+    .optional(),
 
 
 });
