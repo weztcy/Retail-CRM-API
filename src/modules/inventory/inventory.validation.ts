@@ -47,3 +47,37 @@ z.object({
     z.string().optional(),
 
 });
+
+
+// =========================
+// CREATE INVENTORY ADJUSTMENT
+// =========================
+
+export const createInventoryAdjustmentSchema =
+
+z.object({
+
+  productId:
+
+    z.string().uuid(),
+
+
+  quantity:
+
+    z.number()
+      .int()
+      .refine(
+        value => value !== 0,
+        {
+          message:
+            "Quantity adjustment tidak boleh 0",
+        }
+      ),
+
+
+  description:
+
+    z.string()
+      .optional(),
+
+});

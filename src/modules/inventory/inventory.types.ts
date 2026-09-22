@@ -20,3 +20,13 @@ export type CreateInventoryTransactionInput = {
   description?: string;
 
 };
+
+export type CreateInventoryAdjustmentInput = {
+
+  productId: string;
+
+  quantity: number;
+
+  description?: string;
+
+};

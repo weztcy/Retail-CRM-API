@@ -6,6 +6,8 @@ import { ApiError } from "@/utils/errors/api-error";
 
 import type { CreateTransactionInput } from "./transaction.types";
 
+import { createInventoryTransaction } from "@/modules/inventory/inventory.service";
+
 // =========================
 // CREATE TRANSACTION
 // =========================
@@ -19,9 +21,10 @@ export async function createTransaction(
     // CHECK CUSTOMER
     // =========================
 
-    const customer = await tx.customer.findUnique({
+    const customer = await tx.customer.findFirst({
       where: {
         id: data.customerId,
+        isActive: true,
       },
     });
 
@@ -165,8 +168,8 @@ export async function createTransaction(
         },
       });
 
-      await tx.inventoryTransaction.create({
-        data: {
+      await createInventoryTransaction(
+        {
           productId: item.productId,
 
           userId,
@@ -183,63 +186,9 @@ export async function createTransaction(
 
           description: `Stock keluar karena transaksi ${transaction.invoiceNumber}`,
         },
-      });
-    }
 
-    // =========================
-    // UPDATE CUSTOMER TOTAL SPENT
-    // =========================
-
-    await tx.customer.update({
-      where: {
-        id: data.customerId,
-      },
-
-      data: {
-        totalSpent: {
-          increment: totalAmount,
-        },
-      },
-    });
-
-    // =========================
-    // UPDATE LOYALTY POINT
-    // =========================
-
-    const points = Math.floor(totalAmount / 10000);
-
-    if (points > 0) {
-      const loyaltyAccount = await tx.loyaltyAccount.upsert({
-        where: {
-          customerId: data.customerId,
-        },
-
-        update: {
-          points: {
-            increment: points,
-          },
-        },
-
-        create: {
-          customerId: data.customerId,
-
-          points,
-        },
-      });
-
-      await tx.loyaltyHistory.create({
-        data: {
-          loyaltyAccountId: loyaltyAccount.id,
-
-          transactionId: transaction.id,
-
-          type: "EARN",
-
-          points,
-
-          description: `Reward transaksi ${transaction.invoiceNumber}`,
-        },
-      });
+        tx,
+      );
     }
 
     // =========================
@@ -478,8 +427,8 @@ export async function updateTransactionStatus(
           },
         });
 
-        await tx.inventoryTransaction.create({
-          data: {
+        await createInventoryTransaction(
+          {
             productId: item.productId,
 
             userId,
@@ -496,7 +445,9 @@ export async function updateTransactionStatus(
 
             description: `Stock kembali karena pembatalan transaksi ${transaction.invoiceNumber}`,
           },
-        });
+
+          tx,
+        );
       }
 
       // =========================
@@ -515,95 +466,47 @@ export async function updateTransactionStatus(
         },
       });
 
-// =========================
-// ROLLBACK LOYALTY POINT
-// =========================
+      // =========================
+      // ROLLBACK LOYALTY POINT
+      // =========================
 
-const points =
-  Math.floor(
-    Number(transaction.totalAmount) / 10000
-  );
+      const points = Math.floor(Number(transaction.totalAmount) / 10000);
 
+      if (points > 0) {
+        const loyaltyAccount = await tx.loyaltyAccount.findUnique({
+          where: {
+            customerId: transaction.customerId,
+          },
+        });
 
-if (points > 0) {
+        if (loyaltyAccount) {
+          const newPoints = loyaltyAccount.points - points;
 
+          await tx.loyaltyAccount.update({
+            where: {
+              id: loyaltyAccount.id,
+            },
 
-  const loyaltyAccount =
-    await tx.loyaltyAccount.findUnique({
+            data: {
+              points: newPoints < 0 ? 0 : newPoints,
+            },
+          });
 
-      where: {
+          await tx.loyaltyHistory.create({
+            data: {
+              loyaltyAccountId: loyaltyAccount.id,
 
-        customerId:
-          transaction.customerId,
+              transactionId: transaction.id,
 
-      },
+              type: "ROLLBACK",
 
-    });
+              points: -points,
 
-
-
-  if (loyaltyAccount) {
-
-
-    const newPoints =
-      loyaltyAccount.points - points;
-
-
-
-    await tx.loyaltyAccount.update({
-
-      where: {
-
-        id:
-          loyaltyAccount.id,
-
-      },
-
-
-      data: {
-
-        points:
-          newPoints < 0
-            ? 0
-            : newPoints,
-
-      },
-
-    });
-
-
-
-    await tx.loyaltyHistory.create({
-
-      data: {
-
-        loyaltyAccountId:
-          loyaltyAccount.id,
-
-
-        transactionId:
-          transaction.id,
-
-
-        type:
-          "ROLLBACK",
-
-
-        points:
-          -points,
-
-
-        description:
-          `Rollback reward transaksi ${transaction.invoiceNumber}`,
-
-      },
-
-    });
-
-
-  }
-
-}
+              description: `Rollback reward transaksi ${transaction.invoiceNumber}`,
+            },
+          });
+        }
+      }
 
       // =========================
       // CREATE AUDIT LOG

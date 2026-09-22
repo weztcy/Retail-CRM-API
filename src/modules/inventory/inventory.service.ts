@@ -4,8 +4,23 @@ import {
 
 
 import type {
+  Prisma,
+} from "@/generated/prisma/client";
+
+import {
+  ApiError,
+} from "@/utils/errors/api-error";
+
+
+import {
+  createAuditLog,
+} from "@/modules/audit/audit.service";
+
+import type {
   CreateInventoryTransactionInput,
+  CreateInventoryAdjustmentInput,
 } from "./inventory.types";
+
 
 
 
@@ -14,49 +29,270 @@ import type {
 // =========================
 
 export async function createInventoryTransaction(
-  data: CreateInventoryTransactionInput
+
+  data: CreateInventoryTransactionInput,
+
+  db:
+    | Prisma.TransactionClient
+    | typeof prisma = prisma
+
 ) {
 
 
-  return await prisma.inventoryTransaction.create({
+  const inventoryTransaction =
 
-    data: {
+    await db.inventoryTransaction.create({
 
-      productId:
-        data.productId,
+      data: {
 
-
-      userId:
-        data.userId,
+        productId:
+          data.productId,
 
 
-      transactionId:
-        data.transactionId,
+        userId:
+          data.userId,
 
 
-      type:
-        data.type,
+        transactionId:
+          data.transactionId,
 
 
-      quantity:
-        data.quantity,
+        type:
+          data.type,
 
 
-      stockBefore:
-        data.stockBefore,
+        quantity:
+          data.quantity,
 
 
-      stockAfter:
-        data.stockAfter,
+        stockBefore:
+          data.stockBefore,
 
 
-      description:
-        data.description,
-
-    },
+        stockAfter:
+          data.stockAfter,
 
 
-  });
+        description:
+          data.description,
+
+
+      },
+
+
+    });
+
+
+
+
+  return inventoryTransaction;
+
+
+}
+// =========================
+// CREATE STOCK ADJUSTMENT
+// =========================
+
+
+export async function createInventoryAdjustment(
+
+  data:
+    CreateInventoryAdjustmentInput,
+
+  userId:string
+
+){
+
+
+return await prisma.$transaction(
+
+async(tx)=>{
+
+
+// =========================
+// CHECK PRODUCT
+// =========================
+
+
+const product =
+
+await tx.product.findUnique({
+
+where:{
+ id:data.productId,
+},
+
+
+});
+
+
+
+if(!product){
+
+
+throw new ApiError(
+
+"Product tidak ditemukan",
+
+404
+
+);
+
+
+}
+
+
+
+
+// =========================
+// CALCULATE STOCK
+// =========================
+
+
+const stockBefore =
+product.stock;
+
+
+
+const stockAfter =
+stockBefore + data.quantity;
+
+
+
+if(stockAfter < 0){
+
+
+throw new ApiError(
+
+"Stock tidak boleh negatif",
+
+400
+
+);
+
+
+}
+
+
+
+
+
+// =========================
+// UPDATE PRODUCT
+// =========================
+
+
+await tx.product.update({
+
+where:{
+ id:data.productId,
+},
+
+
+data:{
+
+
+stock:
+stockAfter,
+
+
+},
+
+
+});
+
+
+
+
+// =========================
+// CREATE INVENTORY LOG
+// =========================
+
+
+const inventory =
+
+await tx.inventoryTransaction.create({
+
+
+data:{
+
+
+productId:
+
+product.id,
+
+
+userId,
+
+
+type:
+
+"ADJUSTMENT",
+
+
+quantity:
+
+Math.abs(data.quantity),
+
+
+stockBefore,
+
+
+stockAfter,
+
+
+description:
+
+data.description ??
+
+"Manual stock adjustment",
+
+
+},
+
+
+});
+
+
+
+
+// =========================
+// AUDIT LOG
+// =========================
+
+
+await createAuditLog({
+
+userId,
+
+
+action:
+
+"UPDATE",
+
+
+module:
+
+"INVENTORY",
+
+
+description:
+
+`Adjustment stock ${product.name} (${stockBefore} -> ${stockAfter})`,
+
+
+});
+
+
+
+
+return inventory;
+
+
+
+}
+
+);
 
 
 }
