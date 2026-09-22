@@ -10,13 +10,13 @@ export interface CreateProductInput {
   category: string;
 
 
-  imageUrl?: string;
-
-
   price: number;
 
 
   stock?: number;
+
+
+  imageUrl?: string;
 
 
 }
@@ -25,23 +25,16 @@ export interface CreateProductInput {
 
 export interface UpdateProductInput {
 
-
   name?: string;
-
 
   category?: string;
 
-
-  imageUrl?: string;
-
-
   price?: number;
-
 
   stock?: number;
 
-
   isActive?: boolean;
 
+  imageUrl?: string;
 
 }

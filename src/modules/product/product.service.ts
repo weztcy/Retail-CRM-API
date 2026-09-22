@@ -19,14 +19,34 @@ import type {
 // =========================
 
 export async function getProducts(
-  search?: string
+
+  search?: string,
+
+  category?: string,
+
+  status?: string,
+
+  stock?: string,
+
+  sort?: string,
+
+  page: number = 1,
+
+  limit: number = 10
+
 ) {
 
 
-  return await prisma.product.findMany({
+  const skip =
+    (page - 1) * limit;
 
 
-    where: search
+
+  const where = {
+
+
+    ...(search
+
       ? {
 
           OR: [
@@ -51,54 +71,193 @@ export async function getProducts(
               },
             },
 
+
           ],
 
         }
 
-      : undefined,
+      : {}),
 
 
 
-    orderBy: {
+    ...(category
 
-      createdAt: "desc",
+      ? {
+
+          category,
+
+        }
+
+      : {}),
+
+
+
+    ...(status
+
+      ? {
+
+          isActive:
+            status === "ACTIVE",
+
+        }
+
+      : {}),
+
+
+
+    ...(stock === "LOW"
+
+      ? {
+
+          stock: {
+
+            lt: 10,
+
+          },
+
+        }
+
+      : {}),
+
+
+  };
+
+
+
+
+  const orderBy =
+
+
+  sort === "price_asc"
+
+    ? {
+        price: "asc" as const,
+      }
+
+
+    : sort === "price_desc"
+
+    ? {
+        price: "desc" as const,
+      }
+
+
+    : sort === "stock_asc"
+
+    ? {
+        stock: "asc" as const,
+      }
+
+
+    : sort === "stock_desc"
+
+    ? {
+        stock: "desc" as const,
+      }
+
+
+    : sort === "oldest"
+
+    ? {
+        createdAt: "asc" as const,
+      }
+
+
+    : {
+
+        createdAt: "desc" as const,
+
+      };
+
+
+
+
+
+  const [
+    products,
+    total
+  ] = await Promise.all([
+
+
+
+    prisma.product.findMany({
+
+      where,
+
+      skip,
+
+      take: limit,
+
+      orderBy,
+
+      select: {
+
+        id: true,
+
+        sku: true,
+
+        name: true,
+
+        category: true,
+
+        price: true,
+
+        stock: true,
+
+        isActive: true,
+
+        createdAt: true,
+
+        updatedAt: true,
+
+        imageUrl: true,
+
+      },
+
+    }),
+
+
+
+
+    prisma.product.count({
+
+      where,
+
+    }),
+
+
+
+  ]);
+
+
+
+
+
+  return {
+
+    products,
+
+
+    pagination: {
+
+      page,
+
+      limit,
+
+      total,
+
+
+      totalPages:
+
+        Math.ceil(total / limit),
+
 
     },
 
-
-    select: {
-
-      id: true,
-
-      sku: true,
-
-      name: true,
-
-      category: true,
-
-      price: true,
-
-      stock: true,
-
-      isActive: true,
-
-      createdAt: true,
-
-      updatedAt: true,
-
-      imageUrl: true,
-
-    },
-
-
-  });
+  };
 
 
 }
-
-
-
-
 // =========================
 // GET PRODUCT BY ID
 // =========================

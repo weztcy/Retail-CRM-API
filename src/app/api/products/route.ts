@@ -70,16 +70,74 @@ export async function GET(
 
 
 
-    const products =
+    const category =
+      searchParams.get("category")
+      ?? undefined;
+
+
+
+    const status =
+      searchParams.get("status")
+      ?? undefined;
+
+
+
+    const stock =
+      searchParams.get("stock")
+      ?? undefined;
+
+
+
+    const sort =
+      searchParams.get("sort")
+      ?? undefined;
+
+
+
+    const page =
+      Number(
+        searchParams.get("page")
+      )
+      || 1;
+
+
+
+    const limit =
+      Number(
+        searchParams.get("limit")
+      )
+      || 10;
+
+
+
+
+
+    const result =
       await getProducts(
-        search
+
+        search,
+
+        category,
+
+        status,
+
+        stock,
+
+        sort,
+
+        page,
+
+        limit
+
       );
+
+
 
 
 
     return successResponse(
 
-      products,
+      result,
 
       "Product list berhasil diambil"
 
