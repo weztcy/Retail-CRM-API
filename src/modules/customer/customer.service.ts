@@ -29,11 +29,17 @@ export async function getCustomers(
   page: number = 1,
 
   limit: number = 10,
+
+  includeInactive: boolean = false,
 ) {
   const skip = (page - 1) * limit;
 
   const where = {
-    isActive: true,
+    ...(includeInactive
+      ? {}
+      : {
+          isActive: true,
+        }),
 
     ...(search
       ? {
@@ -138,6 +144,8 @@ export async function getCustomers(
 
         imageUrl: true,
 
+        isActive: true,
+
         gender: true,
 
         city: true,
@@ -177,11 +185,10 @@ export async function getCustomers(
 // =========================
 
 export async function getCustomerById(id: string) {
-  return await prisma.customer.findUnique({
+  const customer = await prisma.customer.findUnique({
     where: {
       id,
-
-      isActive: true,
+      isActive:true
     },
 
     select: {
@@ -196,6 +203,8 @@ export async function getCustomerById(id: string) {
       email: true,
 
       imageUrl: true,
+
+      isActive: true,
 
       gender: true,
 
@@ -214,6 +223,12 @@ export async function getCustomerById(id: string) {
       updatedAt: true,
     },
   });
+
+  if (!customer) {
+    throw new ApiError("Customer tidak ditemukan", 404);
+  }
+
+  return customer;
 }
 
 // =========================
@@ -235,6 +250,8 @@ export async function createCustomer(
       email: data.email,
 
       imageUrl: data.imageUrl,
+
+      isActive: true,
 
       gender: data.gender,
 
@@ -306,14 +323,14 @@ export async function updateCustomer(
   data: UpdateCustomerInput,
   userId: string,
 ) {
-  const customer = await prisma.customer.findUnique({
+  const customer = await prisma.customer.findFirst({
     where: {
       id,
+      isActive: true,
     },
 
     select: {
       id: true,
-
       customerCode: true,
     },
   });
@@ -404,9 +421,13 @@ export async function deleteCustomer(
     },
 
     select: {
+      id: true,
+
       customerCode: true,
 
       name: true,
+
+      isActive: true,
     },
   });
 
@@ -416,6 +437,9 @@ export async function deleteCustomer(
 
       404,
     );
+  }
+  if (!customer.isActive) {
+    throw new ApiError("Customer sudah tidak aktif", 400);
   }
 
   const deletedCustomer = await prisma.customer.update({
@@ -452,6 +476,65 @@ export async function deleteCustomer(
 }
 
 // =========================
+// RESTORE CUSTOMER
+// =========================
+
+export async function restoreCustomer(id: string, userId: string) {
+  const customer = await prisma.customer.findUnique({
+    where: {
+      id,
+    },
+
+    select: {
+      id: true,
+      customerCode: true,
+      name: true,
+      isActive: true,
+    },
+  });
+
+  if (!customer) {
+    throw new ApiError("Customer tidak ditemukan", 404);
+  }
+
+  if (customer.isActive) {
+    throw new ApiError("Customer sudah aktif", 400);
+  }
+
+  const restoredCustomer = await prisma.customer.update({
+    where: {
+      id,
+    },
+
+    data: {
+      isActive: true,
+    },
+
+    select: {
+      id: true,
+
+      customerCode: true,
+
+      name: true,
+
+      isActive: true,
+    },
+  });
+
+  await createAuditLog({
+    userId,
+
+    action: "RESTORE",
+
+    module: "CUSTOMER",
+
+    description: `Mengaktifkan kembali customer ${customer.customerCode}`,
+  });
+
+  return restoredCustomer;
+}
+
+// =========================
 // GET CUSTOMERS BY MEMBERSHIP
 // =========================
 
@@ -461,6 +544,8 @@ export async function getCustomersByMembership(
   return await prisma.customer.findMany({
     where: {
       membership,
+
+      isActive: true,
     },
 
     select: {
@@ -475,6 +560,8 @@ export async function getCustomersByMembership(
       membership: true,
 
       totalSpent: true,
+
+      isActive: true,
     },
 
     orderBy: {
@@ -499,6 +586,8 @@ export async function getCustomerTransactions(customerId: string) {
       customerCode: true,
 
       name: true,
+
+      isActive: true,
     },
   });
 

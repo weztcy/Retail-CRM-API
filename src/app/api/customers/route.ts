@@ -30,6 +30,11 @@ import {
 } from "@/modules/auth/permission";
 
 
+import {
+  ApiError,
+} from "@/utils/errors/api-error";
+
+
 
 
 // =========================
@@ -44,92 +49,156 @@ export async function GET(
   try {
 
 
-    await requireRole(
+    const user =
+      await requireRole(
 
-  request,
+        request,
 
-  [
-    "SUPER_ADMIN",
-    "ADMIN",
-    "MANAGER",
-    "SALES",
-    "CUSTOMER_SERVICE"
-  ]
+        [
+          "SUPER_ADMIN",
+          "ADMIN",
+          "MANAGER",
+          "SALES",
+          "CUSTOMER_SERVICE"
+        ]
 
-);
-
-
-
-    const { searchParams } =
-  new URL(request.url);
-
-
-
-const search =
-  searchParams.get("search")
-  ?? undefined;
-
-
-
-const membership =
-  searchParams.get("membership")
-  ?? undefined;
-
-
-
-const gender =
-  searchParams.get("gender")
-  ?? undefined;
-
-
-
-const city =
-  searchParams.get("city")
-  ?? undefined;
-
-
-
-const sort =
-  searchParams.get("sort")
-  ?? undefined;
-
-
-
-const page =
-  Number(
-    searchParams.get("page")
-    ?? 1
-  );
-
-
-
-const limit =
-  Number(
-    searchParams.get("limit")
-    ?? 10
-  );
+      );
 
 
 
 
-const customers =
-  await getCustomers(
+    const {
+      searchParams
+    } =
+      new URL(request.url);
 
-    search,
 
-    membership,
 
-    gender,
 
-    city,
 
-    sort,
+    const search =
+      searchParams.get("search")
+      ?? undefined;
 
-    page,
 
-    limit
 
-  );
+    const membership =
+      searchParams.get("membership")
+      ?? undefined;
+
+
+
+    const gender =
+      searchParams.get("gender")
+      ?? undefined;
+
+
+
+    const city =
+      searchParams.get("city")
+      ?? undefined;
+
+
+
+    const sort =
+      searchParams.get("sort")
+      ?? undefined;
+
+
+
+    const page =
+      Number(
+        searchParams.get("page")
+        ?? 1
+      );
+
+
+
+    const limit =
+      Number(
+        searchParams.get("limit")
+        ?? 10
+      );
+
+
+
+    // =========================
+    // INCLUDE INACTIVE CUSTOMER
+    // =========================
+
+    const includeInactive =
+      searchParams.get(
+        "includeInactive"
+      )
+      === "true";
+
+
+
+
+
+    // hanya role tertentu boleh melihat customer nonaktif
+
+    if(
+
+      includeInactive &&
+
+      ![
+        "SUPER_ADMIN",
+        "ADMIN",
+        "MANAGER"
+      ].includes(user.role)
+
+    ){
+
+      throw new ApiError(
+
+        "Tidak memiliki akses melihat customer nonaktif",
+
+        403
+
+      );
+
+    }
+
+
+
+
+
+
+
+    const customers =
+
+      await getCustomers(
+
+
+        search,
+
+
+        membership,
+
+
+        gender,
+
+
+        city,
+
+
+        sort,
+
+
+        page,
+
+
+        limit,
+
+
+        includeInactive
+
+
+      );
+
+
+
 
 
 
@@ -140,6 +209,7 @@ const customers =
       "Customer list berhasil diambil"
 
     );
+
 
 
 
@@ -159,6 +229,11 @@ const customers =
 
 
 
+
+
+
+
+
 // =========================
 // CREATE CUSTOMER
 // =========================
@@ -174,27 +249,43 @@ export async function POST(
 
 
     const user =
-  await requireRole(
 
-    request,
+      await requireRole(
 
-    [
-      "SUPER_ADMIN",
-      "ADMIN",
-      "MANAGER",
-      "SALES"
-    ]
 
-  );
+        request,
+
+
+        [
+
+          "SUPER_ADMIN",
+
+          "ADMIN",
+
+          "MANAGER",
+
+          "SALES"
+
+        ]
+
+
+      );
+
+
 
 
 
     const body =
+
       await request.json();
 
 
 
+
+
+
     const data =
+
       validate(
 
         createCustomerSchema,
@@ -206,27 +297,42 @@ export async function POST(
 
 
 
+
+
     const customer =
 
       await createCustomer(
 
+
         data,
 
+
         user.id
+
 
       );
 
 
 
+
+
+
+
     return successResponse(
+
 
       customer,
 
+
       "Customer berhasil dibuat",
+
 
       201
 
+
     );
+
+
 
 
 
@@ -234,7 +340,9 @@ export async function POST(
 
 
     return handleError(
+
       error
+
     );
 
 
