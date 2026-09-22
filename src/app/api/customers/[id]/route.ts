@@ -12,6 +12,7 @@ import {
 import {
   getCustomerById,
   updateCustomer,
+  deleteCustomer,
 } from "@/modules/customer/customer.service";
 
 
@@ -269,6 +270,103 @@ if (
 
     return handleError(
       error
+    );
+
+
+  }
+
+
+}
+
+// =========================
+// DELETE CUSTOMER (SOFT DELETE)
+// =========================
+
+export async function DELETE(
+
+  request: NextRequest,
+
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+
+) {
+
+
+  try {
+
+
+    const user =
+      await requireRole(
+
+        request,
+
+        [
+          "SUPER_ADMIN",
+          "ADMIN",
+          "MANAGER"
+        ]
+
+      );
+
+
+
+
+    const {
+      id
+    } = await context.params;
+
+
+
+
+    const params =
+      validate(
+
+        customerIdSchema,
+
+        {
+          id,
+        }
+
+      );
+
+
+
+
+
+    const customer =
+      await deleteCustomer(
+
+        params.id,
+
+        user.id
+
+      );
+
+
+
+
+
+    return successResponse(
+
+      customer,
+
+      "Customer berhasil dinonaktifkan"
+
+    );
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
     );
 
 

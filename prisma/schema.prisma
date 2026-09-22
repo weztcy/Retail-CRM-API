@@ -68,6 +68,9 @@ model Customer {
   imageUrl String?
 
 
+  isActive Boolean @default(true)
+
+
   gender Gender?
 
 
@@ -101,6 +104,7 @@ model Customer {
   loyalty LoyaltyAccount?
 
 
+
   @@index([name])
 
   @@index([phone])
@@ -110,6 +114,8 @@ model Customer {
   @@index([city])
 
   @@index([membership])
+
+  @@index([isActive])
 
 }
 

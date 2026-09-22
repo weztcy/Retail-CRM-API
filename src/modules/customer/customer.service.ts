@@ -1,28 +1,21 @@
 import { prisma } from "@/lib/prisma";
 
-import type {
-  Prisma,
-} from "@/generated/prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
-import {
-  createAuditLog,
-} from "@/modules/audit/audit.service";
+import { createAuditLog } from "@/modules/audit/audit.service";
 
 import type {
   CreateCustomerInput,
   UpdateCustomerInput,
 } from "./customer.types";
 
-import {
-  ApiError,
-} from "@/utils/errors/api-error";
+import { ApiError } from "@/utils/errors/api-error";
 
 // =========================
 // GET ALL CUSTOMERS
 // =========================
 
 export async function getCustomers(
-
   search?: string,
 
   membership?: string,
@@ -35,31 +28,21 @@ export async function getCustomers(
 
   page: number = 1,
 
-  limit: number = 10
-
+  limit: number = 10,
 ) {
-
-
-  const skip =
-    (page - 1) * limit;
-
-
+  const skip = (page - 1) * limit;
 
   const where = {
-
+    isActive: true,
 
     ...(search
-
       ? {
-
           OR: [
-
             {
               customerCode: {
                 contains: search,
               },
             },
-
 
             {
               name: {
@@ -67,13 +50,11 @@ export async function getCustomers(
               },
             },
 
-
             {
               phone: {
                 contains: search,
               },
             },
-
 
             {
               email: {
@@ -81,260 +62,129 @@ export async function getCustomers(
               },
             },
 
-
             {
               city: {
                 contains: search,
               },
             },
-
           ],
-
         }
-
       : {}),
-
-
-
 
     ...(membership
-
       ? {
-
-          membership:
-
-            membership as
-            "BRONZE"
-            | "SILVER"
-            | "GOLD"
-            | "PLATINUM",
-
+          membership: membership as "BRONZE" | "SILVER" | "GOLD" | "PLATINUM",
         }
-
       : {}),
-
-
-
 
     ...(gender
-
       ? {
-
-          gender:
-
-            gender as
-            "MALE"
-            | "FEMALE"
-            | "OTHER",
-
+          gender: gender as "MALE" | "FEMALE" | "OTHER",
         }
-
       : {}),
-
-
-
 
     ...(city
-
       ? {
-
           city,
-
         }
-
       : {}),
-
-
   };
 
-
-
-
-  const orderBy:
-  Prisma.CustomerOrderByWithRelationInput =
-
-
+  const orderBy: Prisma.CustomerOrderByWithRelationInput =
     sort === "name_asc"
-
       ? {
           name: "asc",
         }
+      : sort === "name_desc"
+        ? {
+            name: "desc",
+          }
+        : sort === "spent_asc"
+          ? {
+              totalSpent: "asc",
+            }
+          : sort === "spent_desc"
+            ? {
+                totalSpent: "desc",
+              }
+            : sort === "oldest"
+              ? {
+                  createdAt: "asc",
+                }
+              : {
+                  createdAt: "desc",
+                };
 
-
-    : sort === "name_desc"
-
-      ? {
-          name: "desc",
-        }
-
-
-    : sort === "spent_asc"
-
-      ? {
-          totalSpent: "asc",
-        }
-
-
-    : sort === "spent_desc"
-
-      ? {
-          totalSpent: "desc",
-        }
-
-
-    : sort === "oldest"
-
-      ? {
-          createdAt: "asc",
-        }
-
-
-    : {
-
-        createdAt: "desc",
-
-      };
-
-
-
-
-  const [
-
-    customers,
-
-    total,
-
-  ] = await Promise.all([
-
-
+  const [customers, total] = await Promise.all([
     prisma.customer.findMany({
-
-
       where,
-
 
       skip,
 
-
       take: limit,
-
 
       orderBy,
 
-
       select: {
-
-
         id: true,
-
 
         customerCode: true,
 
-
         name: true,
-
 
         phone: true,
 
-
         email: true,
-
 
         imageUrl: true,
 
-
         gender: true,
-
 
         city: true,
 
-
         membership: true,
-
 
         totalSpent: true,
 
-
         createdAt: true,
 
-
         updatedAt: true,
-
-
       },
-
-
     }),
-
-
-
 
     prisma.customer.count({
-
       where,
-
     }),
-
-
   ]);
 
-
-
-
-
   return {
-
-
     customers,
 
-
     pagination: {
-
-
       page,
-
 
       limit,
 
-
       total,
 
-
-      totalPages:
-
-        Math.ceil(
-          total / limit
-        ),
-
-
+      totalPages: Math.ceil(total / limit),
     },
-
-
   };
-
-
 }
-
 
 // =========================
 // GET CUSTOMER BY ID
 // =========================
 
-export async function getCustomerById(
-  id: string
-) {
-
+export async function getCustomerById(id: string) {
   return await prisma.customer.findUnique({
-
     where: {
-
       id,
 
+      isActive: true,
     },
 
-
     select: {
-
       id: true,
 
       customerCode: true,
@@ -362,14 +212,9 @@ export async function getCustomerById(
       createdAt: true,
 
       updatedAt: true,
-
     },
-
   });
-
 }
-
-
 
 // =========================
 // CREATE CUSTOMER
@@ -377,148 +222,80 @@ export async function getCustomerById(
 
 export async function createCustomer(
   data: CreateCustomerInput,
-  userId: string
+  userId: string,
 ) {
+  const customer = await prisma.customer.create({
+    data: {
+      customerCode: data.customerCode,
 
+      name: data.name,
 
-  const customer =
+      phone: data.phone,
 
-    await prisma.customer.create({
+      email: data.email,
 
-      data: {
+      imageUrl: data.imageUrl,
 
-        customerCode:
-          data.customerCode,
+      gender: data.gender,
 
+      birthDate: data.birthDate ? new Date(data.birthDate) : undefined,
 
-        name:
-          data.name,
+      address: data.address,
 
+      city: data.city,
 
-        phone:
-          data.phone,
+      // =========================
+      // CREATE LOYALTY ACCOUNT
+      // =========================
 
-
-        email:
-          data.email,
-
-
-        imageUrl:
-          data.imageUrl,
-
-
-        gender:
-          data.gender,
-
-
-        birthDate:
-
-          data.birthDate
-
-            ? new Date(data.birthDate)
-
-            : undefined,
-
-
-        address:
-          data.address,
-
-
-        city:
-          data.city,
-
-
-
-        // =========================
-        // CREATE LOYALTY ACCOUNT
-        // =========================
-
-        loyalty: {
-
-          create: {
-
-            points: 0,
-
-          },
-
+      loyalty: {
+        create: {
+          points: 0,
         },
-
-
       },
+    },
 
+    select: {
+      id: true,
 
-      select: {
+      customerCode: true,
 
-        id: true,
+      name: true,
 
-        customerCode: true,
+      phone: true,
 
-        name: true,
+      email: true,
 
-        phone: true,
+      imageUrl: true,
 
-        email: true,
+      membership: true,
 
-        imageUrl: true,
+      isActive: true,
 
-        membership: true,
+      totalSpent: true,
 
-        totalSpent: true,
+      createdAt: true,
 
-        createdAt: true,
-
-
-        loyalty: {
-
-          select: {
-
-            points: true,
-
-          },
-
+      loyalty: {
+        select: {
+          points: true,
         },
-
-
       },
-
-
-    });
-
-
-
-
-
-  await createAuditLog({
-
-    userId,
-
-
-    action:
-
-      "CREATE",
-
-
-    module:
-
-      "CUSTOMER",
-
-
-    description:
-
-      `Membuat customer ${customer.customerCode}`,
-
-
+    },
   });
 
+  await createAuditLog({
+    userId,
 
+    action: "CREATE",
 
+    module: "CUSTOMER",
 
+    description: `Membuat customer ${customer.customerCode}`,
+  });
 
   return customer;
-
-
 }
-
 
 // =========================
 // UPDATE CUSTOMER
@@ -527,228 +304,151 @@ export async function createCustomer(
 export async function updateCustomer(
   id: string,
   data: UpdateCustomerInput,
-  userId: string
+  userId: string,
 ) {
+  const customer = await prisma.customer.findUnique({
+    where: {
+      id,
+    },
 
+    select: {
+      id: true,
 
-  const customer =
-
-    await prisma.customer.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-
-      select: {
-
-        id: true,
-
-        customerCode: true,
-
-      },
-
-    });
-
-
-
+      customerCode: true,
+    },
+  });
 
   if (!customer) {
-
     throw new ApiError(
-
       "Customer tidak ditemukan",
 
-      404
-
+      404,
     );
-
   }
 
+  const updatedCustomer = await prisma.customer.update({
+    where: {
+      id,
+    },
 
+    data: {
+      name: data.name,
 
+      phone: data.phone,
 
+      email: data.email,
 
-  const updatedCustomer =
+      imageUrl: data.imageUrl,
 
-    await prisma.customer.update({
+      gender: data.gender,
 
-      where: {
+      birthDate: data.birthDate ? new Date(data.birthDate) : undefined,
 
-        id,
+      address: data.address,
 
-      },
+      city: data.city,
 
+      membership: data.membership,
+    },
 
-      data: {
+    select: {
+      id: true,
 
+      customerCode: true,
 
-        name:
+      name: true,
 
-          data.name,
+      phone: true,
 
+      email: true,
 
-        phone:
+      imageUrl: true,
 
-          data.phone,
+      membership: true,
 
+      isActive: true,
 
-        email:
-
-          data.email,
-
-
-        imageUrl:
-
-          data.imageUrl,
-
-
-        gender:
-
-          data.gender,
-
-
-
-        birthDate:
-
-          data.birthDate
-
-            ? new Date(data.birthDate)
-
-            : undefined,
-
-
-
-        address:
-
-          data.address,
-
-
-
-        city:
-
-          data.city,
-
-
-
-        membership:
-
-          data.membership,
-
-
-      },
-
-
-      select: {
-
-
-        id: true,
-
-
-        customerCode: true,
-
-
-        name: true,
-
-
-        phone: true,
-
-
-        email: true,
-
-
-        imageUrl: true,
-
-
-        membership: true,
-
-
-        updatedAt: true,
-
-
-      },
-
-
-    });
-
-
-
+      updatedAt: true,
+    },
+  });
 
   // =========================
   // CREATE AUDIT LOG
   // =========================
 
   await createAuditLog({
-
     userId,
 
+    action: "UPDATE",
 
-    action:
+    module: "CUSTOMER",
 
-      "UPDATE",
-
-
-    module:
-
-      "CUSTOMER",
-
-
-    description:
-
-      `Mengubah data customer ${customer.customerCode}`,
-
+    description: `Mengubah data customer ${customer.customerCode}`,
   });
 
-
-
-
-
-
   return updatedCustomer;
-
-
 }
-
 
 // =========================
 // DELETE CUSTOMER (SOFT)
 // =========================
 
 export async function deleteCustomer(
-  id: string
+  id: string,
+
+  userId: string,
 ) {
-
-
-  return await prisma.customer.update({
-
+  const customer = await prisma.customer.findUnique({
     where: {
-
       id,
-
     },
-
-
-    data: {
-
-      membership: "BRONZE",
-
-    },
-
 
     select: {
+      customerCode: true,
 
+      name: true,
+    },
+  });
+
+  if (!customer) {
+    throw new ApiError(
+      "Customer tidak ditemukan",
+
+      404,
+    );
+  }
+
+  const deletedCustomer = await prisma.customer.update({
+    where: {
+      id,
+    },
+
+    data: {
+      isActive: false,
+    },
+
+    select: {
       id: true,
+
+      customerCode: true,
 
       name: true,
 
-      phone: true,
-
+      isActive: true,
     },
-
   });
 
+  await createAuditLog({
+    userId,
+
+    action: "DELETE",
+
+    module: "CUSTOMER",
+
+    description: `Menonaktifkan customer ${customer.customerCode}`,
+  });
+
+  return deletedCustomer;
 }
 
 // =========================
@@ -756,25 +456,14 @@ export async function deleteCustomer(
 // =========================
 
 export async function getCustomersByMembership(
-  membership:
-    | "BRONZE"
-    | "SILVER"
-    | "GOLD"
-    | "PLATINUM"
+  membership: "BRONZE" | "SILVER" | "GOLD" | "PLATINUM",
 ) {
-
-
   return await prisma.customer.findMany({
-
     where: {
-
       membership,
-
     },
 
-
     select: {
-
       id: true,
 
       customerCode: true,
@@ -786,167 +475,86 @@ export async function getCustomersByMembership(
       membership: true,
 
       totalSpent: true,
-
     },
-
 
     orderBy: {
-
       totalSpent: "desc",
-
     },
-
   });
-
 }
 
 // =========================
 // CUSTOMER PURCHASE HISTORY
 // =========================
 
-export async function getCustomerTransactions(
-  customerId: string
-) {
-
-
-  const customer =
-    await prisma.customer.findUnique({
-
-      where: {
-
-        id: customerId,
-
-      },
-
-
-      select: {
-
-        id: true,
-
-        customerCode: true,
-
-        name: true,
-
-      },
-
-    });
-
-
-
-  if (!customer) {
-
-    throw new ApiError(
-
-      "Customer tidak ditemukan",
-
-      404
-
-    );
-
-  }
-
-
-
-
-  const transactions =
-    await prisma.transaction.findMany({
-
-      where: {
-
-        customerId,
-
-      },
-
-
-      orderBy: {
-
-        createdAt: "desc",
-
-      },
-
-
-      include: {
-
-        items: {
-
-          include: {
-
-            product: {
-
-              select: {
-
-                id: true,
-
-                sku: true,
-
-                name: true,
-
-              },
-
-            },
-
-          },
-
-        },
-
-      },
-
-    });
-
-
-
-
-
-  const completedTransactions =
-    transactions.filter(
-
-      transaction =>
-
-        transaction.status === "COMPLETED"
-
-    );
-
-
-
-
-
-  const totalSpent =
-    completedTransactions.reduce(
-
-      (total, transaction) =>
-
-        total + Number(transaction.totalAmount),
-
-      0
-
-    );
-
-
-
-
-
-  return {
-
-
-    customer,
-
-
-    summary: {
-
-      totalTransaction:
-        transactions.length,
-
-
-      totalSpent,
-
-
+export async function getCustomerTransactions(customerId: string) {
+  const customer = await prisma.customer.findUnique({
+    where: {
+      id: customerId,
     },
 
+    select: {
+      id: true,
+
+      customerCode: true,
+
+      name: true,
+    },
+  });
+
+  if (!customer) {
+    throw new ApiError(
+      "Customer tidak ditemukan",
+
+      404,
+    );
+  }
+
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      customerId,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    include: {
+      items: {
+        include: {
+          product: {
+            select: {
+              id: true,
+
+              sku: true,
+
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const completedTransactions = transactions.filter(
+    (transaction) => transaction.status === "COMPLETED",
+  );
+
+  const totalSpent = completedTransactions.reduce(
+    (total, transaction) => total + Number(transaction.totalAmount),
+
+    0,
+  );
+
+  return {
+    customer,
+
+    summary: {
+      totalTransaction: transactions.length,
+
+      totalSpent,
+    },
 
     transactions,
-
-
   };
-
-
 }
