@@ -1,118 +1,126 @@
 import {
- NextRequest
+  NextRequest,
 } from "next/server";
 
 
 import {
- successResponse,
- handleError
+  successResponse,
+  handleError,
 } from "@/utils/response";
 
 
 import {
- requireRole
-} from "@/modules/auth/permission";
+  restoreCustomer,
+} from "@/modules/customer/customer.service";
 
 
 import {
- validate
+  validate,
 } from "@/validations/validate";
 
 
 import {
- customerIdSchema
+  customerIdSchema,
 } from "@/modules/customer/customer.validation";
 
 
 import {
- restoreCustomer
-} from "@/modules/customer/customer.service";
+  requireRole,
+} from "@/modules/auth/permission";
 
 
 
 
-export async function PUT(
+// =========================
+// RESTORE CUSTOMER
+// =========================
 
- request:NextRequest,
+export async function PATCH(
 
- context:{
-   params:Promise<{
-     id:string
-   }>
- }
+  request: NextRequest,
 
-){
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
 
-
-try{
-
-
-const user =
-await requireRole(
-
-request,
-
-[
-"SUPER_ADMIN",
-"ADMIN",
-"MANAGER"
-]
-
-);
+) {
 
 
+  try {
 
 
-const {
-id
-}=await context.params;
+    const user =
+      await requireRole(
 
+        request,
 
+        [
+          "SUPER_ADMIN",
+          "ADMIN",
+          "MANAGER"
+        ]
 
-const params =
-validate(
-
-customerIdSchema,
-
-{
-id
-}
-
-);
+      );
 
 
 
 
-const customer =
-await restoreCustomer(
-
-params.id,
-
-user.id
-
-);
+    const {
+      id
+    } = await context.params;
 
 
 
 
-return successResponse(
+    const params =
+      validate(
 
-customer,
+        customerIdSchema,
 
-"Customer berhasil dipulihkan"
+        {
+          id,
+        }
 
-);
-
-
-
-}catch(error){
-
-
-return handleError(error);
+      );
 
 
-}
 
+
+    const customer =
+      await restoreCustomer(
+
+        params.id,
+
+        user.id
+
+      );
+
+
+
+
+    return successResponse(
+
+      customer,
+
+      "Customer berhasil diaktifkan kembali"
+
+    );
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
 
 
 }

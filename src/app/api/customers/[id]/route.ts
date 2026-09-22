@@ -188,9 +188,11 @@ export async function PUT(
 
 
 
+
     const {
       id
     } = await context.params;
+
 
 
 
@@ -209,25 +211,97 @@ export async function PUT(
 
 
 
-    const body =
-  await request.json();
 
+    // =========================
+    // CHECK BODY
+    // =========================
 
-if (
-  Object.keys(body).length === 0
-) {
-
-  throw new ApiError(
-    "Tidak ada data yang diperbarui",
-    400
-  );
-
-}
+    const text =
+      await request.text();
 
 
 
+
+    if(!text.trim()){
+
+
+      throw new ApiError(
+
+        "Tidak ada data yang diperbarui",
+
+        400
+
+      );
+
+
+    }
+
+
+
+
+
+    let body;
+
+
+
+
+    try {
+
+
+      body =
+        JSON.parse(text);
+
+
+
+    } catch {
+
+
+      throw new ApiError(
+
+        "Format JSON tidak valid",
+
+        400
+
+      );
+
+
+    }
+
+
+
+
+
+
+    if(
+
+      Object.keys(body).length === 0
+
+    ){
+
+
+      throw new ApiError(
+
+        "Tidak ada data yang diperbarui",
+
+        400
+
+      );
+
+
+    }
+
+
+
+
+
+
+
+    // =========================
+    // VALIDATE REQUEST BODY
+    // =========================
 
     const data =
+
       validate(
 
         updateCustomerSchema,
@@ -240,7 +314,14 @@ if (
 
 
 
+
+
+    // =========================
+    // UPDATE CUSTOMER
+    // =========================
+
     const customer =
+
       await updateCustomer(
 
         params.id,
@@ -255,13 +336,20 @@ if (
 
 
 
+
+
     return successResponse(
+
 
       customer,
 
+
       "Customer berhasil diperbarui"
 
+
     );
+
+
 
 
 
@@ -269,7 +357,9 @@ if (
 
 
     return handleError(
+
       error
+
     );
 
 
