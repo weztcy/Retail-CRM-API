@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
 
+import type {
+  Prisma,
+} from "@/generated/prisma/client";
+
 import {
   createAuditLog,
 } from "@/modules/audit/audit.service";
@@ -17,47 +21,299 @@ import {
 // GET ALL CUSTOMERS
 // =========================
 
-export async function getCustomers() {
+export async function getCustomers(
 
-  return await prisma.customer.findMany({
+  search?: string,
 
-    select: {
+  membership?: string,
 
-      id: true,
+  gender?: string,
 
-      customerCode: true,
+  city?: string,
 
-      name: true,
+  sort?: string,
 
-      phone: true,
+  page: number = 1,
 
-      email: true,
+  limit: number = 10
 
-      gender: true,
+) {
 
-      city: true,
 
-      membership: true,
+  const skip =
+    (page - 1) * limit;
 
-      totalSpent: true,
 
-      createdAt: true,
 
-      updatedAt: true,
+  const where = {
+
+
+    ...(search
+
+      ? {
+
+          OR: [
+
+            {
+              customerCode: {
+                contains: search,
+              },
+            },
+
+
+            {
+              name: {
+                contains: search,
+              },
+            },
+
+
+            {
+              phone: {
+                contains: search,
+              },
+            },
+
+
+            {
+              email: {
+                contains: search,
+              },
+            },
+
+
+            {
+              city: {
+                contains: search,
+              },
+            },
+
+          ],
+
+        }
+
+      : {}),
+
+
+
+
+    ...(membership
+
+      ? {
+
+          membership:
+
+            membership as
+            "BRONZE"
+            | "SILVER"
+            | "GOLD"
+            | "PLATINUM",
+
+        }
+
+      : {}),
+
+
+
+
+    ...(gender
+
+      ? {
+
+          gender:
+
+            gender as
+            "MALE"
+            | "FEMALE"
+            | "OTHER",
+
+        }
+
+      : {}),
+
+
+
+
+    ...(city
+
+      ? {
+
+          city,
+
+        }
+
+      : {}),
+
+
+  };
+
+
+
+
+  const orderBy:
+  Prisma.CustomerOrderByWithRelationInput =
+
+
+    sort === "name_asc"
+
+      ? {
+          name: "asc",
+        }
+
+
+    : sort === "name_desc"
+
+      ? {
+          name: "desc",
+        }
+
+
+    : sort === "spent_asc"
+
+      ? {
+          totalSpent: "asc",
+        }
+
+
+    : sort === "spent_desc"
+
+      ? {
+          totalSpent: "desc",
+        }
+
+
+    : sort === "oldest"
+
+      ? {
+          createdAt: "asc",
+        }
+
+
+    : {
+
+        createdAt: "desc",
+
+      };
+
+
+
+
+  const [
+
+    customers,
+
+    total,
+
+  ] = await Promise.all([
+
+
+    prisma.customer.findMany({
+
+
+      where,
+
+
+      skip,
+
+
+      take: limit,
+
+
+      orderBy,
+
+
+      select: {
+
+
+        id: true,
+
+
+        customerCode: true,
+
+
+        name: true,
+
+
+        phone: true,
+
+
+        email: true,
+
+
+        imageUrl: true,
+
+
+        gender: true,
+
+
+        city: true,
+
+
+        membership: true,
+
+
+        totalSpent: true,
+
+
+        createdAt: true,
+
+
+        updatedAt: true,
+
+
+      },
+
+
+    }),
+
+
+
+
+    prisma.customer.count({
+
+      where,
+
+    }),
+
+
+  ]);
+
+
+
+
+
+  return {
+
+
+    customers,
+
+
+    pagination: {
+
+
+      page,
+
+
+      limit,
+
+
+      total,
+
+
+      totalPages:
+
+        Math.ceil(
+          total / limit
+        ),
+
 
     },
 
 
-    orderBy: {
+  };
 
-      createdAt: "desc",
-
-    },
-
-  });
 
 }
-
 
 
 // =========================
@@ -88,6 +344,8 @@ export async function getCustomerById(
       phone: true,
 
       email: true,
+
+      imageUrl: true,
 
       gender: true,
 
@@ -145,6 +403,10 @@ export async function createCustomer(
           data.email,
 
 
+        imageUrl:
+          data.imageUrl,
+
+
         gender:
           data.gender,
 
@@ -197,6 +459,8 @@ export async function createCustomer(
 
         email: true,
 
+        imageUrl: true,
+
         membership: true,
 
         totalSpent: true,
@@ -214,6 +478,7 @@ export async function createCustomer(
 
         },
 
+
       },
 
 
@@ -222,9 +487,6 @@ export async function createCustomer(
 
 
 
-  // =========================
-  // CREATE AUDIT LOG
-  // =========================
 
   await createAuditLog({
 
@@ -232,10 +494,12 @@ export async function createCustomer(
 
 
     action:
+
       "CREATE",
 
 
     module:
+
       "CUSTOMER",
 
 
@@ -249,11 +513,11 @@ export async function createCustomer(
 
 
 
+
   return customer;
 
 
 }
-
 
 
 // =========================
@@ -268,6 +532,7 @@ export async function updateCustomer(
 
 
   const customer =
+
     await prisma.customer.findUnique({
 
       where: {
@@ -275,6 +540,7 @@ export async function updateCustomer(
         id,
 
       },
+
 
       select: {
 
@@ -285,6 +551,7 @@ export async function updateCustomer(
       },
 
     });
+
 
 
 
@@ -305,6 +572,7 @@ export async function updateCustomer(
 
 
   const updatedCustomer =
+
     await prisma.customer.update({
 
       where: {
@@ -316,20 +584,31 @@ export async function updateCustomer(
 
       data: {
 
+
         name:
+
           data.name,
 
 
         phone:
+
           data.phone,
 
 
         email:
+
           data.email,
 
 
+        imageUrl:
+
+          data.imageUrl,
+
+
         gender:
+
           data.gender,
+
 
 
         birthDate:
@@ -341,41 +620,58 @@ export async function updateCustomer(
             : undefined,
 
 
+
         address:
+
           data.address,
 
 
+
         city:
+
           data.city,
 
 
+
         membership:
+
           data.membership,
+
 
       },
 
 
       select: {
 
+
         id: true,
+
 
         customerCode: true,
 
+
         name: true,
+
 
         phone: true,
 
+
         email: true,
+
+
+        imageUrl: true,
+
 
         membership: true,
 
+
         updatedAt: true,
+
 
       },
 
+
     });
-
-
 
 
 

@@ -1,5 +1,6 @@
 export interface CreateCustomerInput {
 
+
   customerCode: string;
 
 
@@ -12,7 +13,11 @@ export interface CreateCustomerInput {
   email?: string;
 
 
+  imageUrl?: string;
+
+
   gender?:
+
     | "MALE"
     | "FEMALE"
     | "OTHER";
@@ -31,6 +36,8 @@ export interface CreateCustomerInput {
 
 
 
+
+
 export interface UpdateCustomerInput {
 
 
@@ -43,7 +50,11 @@ export interface UpdateCustomerInput {
   email?: string;
 
 
+  imageUrl?: string;
+
+
   gender?:
+
     | "MALE"
     | "FEMALE"
     | "OTHER";
@@ -59,6 +70,7 @@ export interface UpdateCustomerInput {
 
 
   membership?:
+
     | "BRONZE"
     | "SILVER"
     | "GOLD"

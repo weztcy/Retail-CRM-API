@@ -60,8 +60,76 @@ export async function GET(
 
 
 
-    const customers =
-      await getCustomers();
+    const { searchParams } =
+  new URL(request.url);
+
+
+
+const search =
+  searchParams.get("search")
+  ?? undefined;
+
+
+
+const membership =
+  searchParams.get("membership")
+  ?? undefined;
+
+
+
+const gender =
+  searchParams.get("gender")
+  ?? undefined;
+
+
+
+const city =
+  searchParams.get("city")
+  ?? undefined;
+
+
+
+const sort =
+  searchParams.get("sort")
+  ?? undefined;
+
+
+
+const page =
+  Number(
+    searchParams.get("page")
+    ?? 1
+  );
+
+
+
+const limit =
+  Number(
+    searchParams.get("limit")
+    ?? 10
+  );
+
+
+
+
+const customers =
+  await getCustomers(
+
+    search,
+
+    membership,
+
+    gender,
+
+    city,
+
+    sort,
+
+    page,
+
+    limit
+
+  );
 
 
 

@@ -209,7 +209,19 @@ export async function PUT(
 
 
     const body =
-      await request.json();
+  await request.json();
+
+
+if (
+  Object.keys(body).length === 0
+) {
+
+  throw new ApiError(
+    "Tidak ada data yang diperbarui",
+    400
+  );
+
+}
 
 
 
