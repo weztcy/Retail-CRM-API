@@ -40,6 +40,8 @@ model User {
   refreshTokens RefreshToken[]
 
   transactions Transaction[]
+
+  inventoryTransactions InventoryTransaction[]
 }
 
 // =========================
@@ -139,6 +141,8 @@ model Product {
 
   transactionItems TransactionItem[]
 
+  inventoryTransactions InventoryTransaction[]
+
   @@index([name])
   @@index([category])
 }
@@ -180,6 +184,10 @@ model Transaction {
 
   items TransactionItem[]
 
+  inventoryTransactions InventoryTransaction[]
+
+  loyaltyHistories LoyaltyHistory[]
+
   @@index([customerId])
   @@index([userId])
   @@index([invoiceNumber])
@@ -213,24 +221,6 @@ model TransactionItem {
 
   @@index([transactionId])
   @@index([productId])
-}
-
-// =========================
-// LOYALTY
-// =========================
-
-model LoyaltyAccount {
-  id String @id @default(uuid())
-
-  customerId String @unique
-
-  points Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
 
 // =========================
@@ -277,6 +267,90 @@ model RefreshToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+// =========================
+// INVENTORY TRANSACTION
+// =========================
+
+model InventoryTransaction {
+  id String @id @default(uuid())
+
+  productId String
+
+  userId String
+
+  transactionId String?
+
+  type InventoryType
+
+  quantity Int
+
+  stockBefore Int
+
+  stockAfter Int
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
+
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([productId])
+  @@index([userId])
+  @@index([transactionId])
+}
+
+// =========================
+// LOYALTY
+// =========================
+
+model LoyaltyAccount {
+  id String @id @default(uuid())
+
+  customerId String @unique
+
+  points Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  histories LoyaltyHistory[]
+}
+
+// =========================
+// LOYALTY HISTORY
+// =========================
+
+model LoyaltyHistory {
+  id String @id @default(uuid())
+
+  loyaltyAccountId String
+
+  transactionId String?
+
+  type LoyaltyHistoryType
+
+  points Int
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  loyaltyAccount LoyaltyAccount @relation(fields: [loyaltyAccountId], references: [id], onDelete: Cascade)
+
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([loyaltyAccountId])
+  @@index([transactionId])
+  @@index([createdAt])
 }
 
 // =========================
@@ -365,4 +439,18 @@ enum TransactionStatus {
   COMPLETED
 
   CANCELLED
+}
+
+enum InventoryType {
+  STOCK_OUT
+
+  STOCK_IN
+
+  ADJUSTMENT
+}
+
+enum LoyaltyHistoryType {
+  EARN
+
+  ROLLBACK
 }

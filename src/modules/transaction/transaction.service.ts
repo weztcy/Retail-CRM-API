@@ -100,29 +100,29 @@ export async function createTransaction(
     }
 
     // =========================
-// CREATE TRANSACTION
-// =========================
+    // CREATE TRANSACTION
+    // =========================
 
-const transaction = await tx.transaction.create({
-  data: {
-    invoiceNumber: generateInvoiceNumber(),
+    const transaction = await tx.transaction.create({
+      data: {
+        invoiceNumber: generateInvoiceNumber(),
 
-    customerId: data.customerId,
+        customerId: data.customerId,
 
-    // PERBAIKAN:
-    // gunakan userId dari request
-    // untuk audit log
-    userId,
+        // PERBAIKAN:
+        // gunakan userId dari request
+        // untuk audit log
+        userId,
 
-    totalAmount,
+        totalAmount,
 
-    paymentMethod: data.paymentMethod,
+        paymentMethod: data.paymentMethod,
 
-    paymentStatus: data.paymentStatus ?? "PAID",
+        paymentStatus: data.paymentStatus ?? "PAID",
 
-    notes: data.notes,
-  },
-});
+        notes: data.notes,
+      },
+    });
 
     // =========================
     // CREATE ITEMS
@@ -143,10 +143,16 @@ const transaction = await tx.transaction.create({
     });
 
     // =========================
-    // UPDATE STOCK
+    // UPDATE STOCK + INVENTORY LOG
     // =========================
 
     for (const item of data.items) {
+      const product = products.find((p) => p.id === item.productId);
+
+      if (!product) {
+        throw new ApiError("Product tidak ditemukan", 404);
+      }
+
       await tx.product.update({
         where: {
           id: item.productId,
@@ -156,6 +162,26 @@ const transaction = await tx.transaction.create({
           stock: {
             decrement: item.quantity,
           },
+        },
+      });
+
+      await tx.inventoryTransaction.create({
+        data: {
+          productId: item.productId,
+
+          userId,
+
+          transactionId: transaction.id,
+
+          type: "STOCK_OUT",
+
+          quantity: item.quantity,
+
+          stockBefore: product.stock,
+
+          stockAfter: product.stock - item.quantity,
+
+          description: `Stock keluar karena transaksi ${transaction.invoiceNumber}`,
         },
       });
     }
@@ -177,68 +203,58 @@ const transaction = await tx.transaction.create({
     });
 
     // =========================
-// UPDATE LOYALTY POINT
-// =========================
+    // UPDATE LOYALTY POINT
+    // =========================
 
-const points = Math.floor(totalAmount / 10000);
+    const points = Math.floor(totalAmount / 10000);
 
-if (points > 0) {
+    if (points > 0) {
+      const loyaltyAccount = await tx.loyaltyAccount.upsert({
+        where: {
+          customerId: data.customerId,
+        },
 
-  await tx.loyaltyAccount.upsert({
+        update: {
+          points: {
+            increment: points,
+          },
+        },
 
-    where: {
+        create: {
+          customerId: data.customerId,
 
-      customerId: data.customerId,
+          points,
+        },
+      });
 
-    },
+      await tx.loyaltyHistory.create({
+        data: {
+          loyaltyAccountId: loyaltyAccount.id,
 
+          transactionId: transaction.id,
 
-    update: {
+          type: "EARN",
 
-      points: {
+          points,
 
-        increment: points,
+          description: `Reward transaksi ${transaction.invoiceNumber}`,
+        },
+      });
+    }
 
-      },
+    // =========================
+    // CREATE AUDIT LOG
+    // =========================
 
-    },
+    await createAuditLog({
+      userId,
 
+      action: "CREATE",
 
-    create: {
+      module: "TRANSACTION",
 
-      customerId: data.customerId,
-
-      points,
-
-    },
-
-  });
-
-}
-
-
-// =========================
-// CREATE AUDIT LOG
-// =========================
-
-await createAuditLog({
-
-  userId,
-
-
-  action:
-    "CREATE",
-
-
-  module:
-    "TRANSACTION",
-
-
-  description:
-
-    `Membuat transaksi ${transaction.invoiceNumber}`,
-
-});
+      description: `Membuat transaksi ${transaction.invoiceNumber}`,
+    });
 
     // =========================
     // RETURN TRANSACTION
@@ -403,276 +419,237 @@ export async function getTransactionById(id: string) {
 export async function updateTransactionStatus(
   id: string,
 
-  status:
-    | "PENDING"
-    | "PROCESSING"
-    | "COMPLETED"
-    | "CANCELLED",
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED",
 
-    userId: string,
+  userId: string,
 ) {
-
-
-  return await prisma.$transaction(
-
-    async (tx) => {
-
-
-      const transaction =
-        await tx.transaction.findUnique({
-
-          where: {
-
-            id,
-
-          },
-
-
-          include: {
-
-            items: true,
-
-          },
-
-        });
-
-
-
-
-      if (!transaction) {
-
-
-        throw new ApiError(
-
-          "Transaction tidak ditemukan",
-
-          404
-
-        );
-
-
-      }
-
-
-
-
-      // =========================
-      // CANCEL TRANSACTION
-      // =========================
-
-      if (
-
-        status === "CANCELLED"
-
-        &&
-
-        transaction.status !== "CANCELLED"
-
-      ) {
-
-
-
-        // =========================
-        // RESTORE STOCK
-        // =========================
-
-        for (
-
-          const item of transaction.items
-
-        ) {
-
-
-          await tx.product.update({
-
-            where: {
-
-              id:
-                item.productId,
-
-            },
-
-
-            data: {
-
-              stock: {
-
-                increment:
-                  item.quantity,
-
-              },
-
-            },
-
-          });
-
-
-        }
-
-
-
-
-
-        // =========================
-        // ROLLBACK CUSTOMER SPENDING
-        // =========================
-
-        await tx.customer.update({
-
-          where: {
-
-            id:
-              transaction.customerId,
-
-          },
-
-
-          data: {
-
-            totalSpent: {
-
-              decrement:
-                transaction.totalAmount,
-
-            },
-
-          },
-
-        });
-
-
-
-
-
-
-        // =========================
-        // ROLLBACK LOYALTY POINT
-        // =========================
-
-        const points =
-          Math.floor(
-
-            Number(transaction.totalAmount) / 10000
-
-          );
-
-
-
-        if (points > 0) {
-
-
-          await tx.loyaltyAccount.updateMany({
-
-            where: {
-
-              customerId:
-                transaction.customerId,
-
-            },
-
-
-            data: {
-
-              points: {
-
-                decrement:
-                  points,
-
-              },
-
-            },
-
-          });
-
-
-        }
-
-
-      }
-
-
-
-
-
-// =========================
-// CREATE AUDIT LOG
-// =========================
-
-if (
-  transaction.status !== status
-) {
-
-
-  await createAuditLog({
-
-    userId,
-
-
-    action:
-      "UPDATE",
-
-
-    module:
-      "TRANSACTION",
-
-
-    description:
-
-      `Mengubah status transaksi ${transaction.invoiceNumber} menjadi ${status}`,
-
-  });
-
-
-}
-
-
-
-
-// =========================
-// UPDATE STATUS
-// =========================
-
-return await tx.transaction.update({
-
-  where: {
-
-    id,
-
-  },
-
-
-  data: {
-
-    status,
-
-  },
-
-
-  include: {
-
-    customer: {
-
-      select: {
-
-        id: true,
-
-        name: true,
-
+  return await prisma.$transaction(async (tx) => {
+    const transaction = await tx.transaction.findUnique({
+      where: {
+        id,
       },
 
-    },
+      include: {
+        items: true,
+      },
+    });
 
+    if (!transaction) {
+      throw new ApiError(
+        "Transaction tidak ditemukan",
 
-    items: true,
-
-  },
-
-});
-
-
+        404,
+      );
     }
 
+    // =========================
+    // CANCEL TRANSACTION
+    // =========================
+
+    if (status === "CANCELLED" && transaction.status !== "CANCELLED") {
+      // =========================
+      // RESTORE STOCK + INVENTORY LOG
+      // =========================
+
+      for (const item of transaction.items) {
+        const product = await tx.product.findUnique({
+          where: {
+            id: item.productId,
+          },
+        });
+
+        if (!product) {
+          throw new ApiError(
+            "Product tidak ditemukan",
+
+            404,
+          );
+        }
+
+        await tx.product.update({
+          where: {
+            id: item.productId,
+          },
+
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+
+        await tx.inventoryTransaction.create({
+          data: {
+            productId: item.productId,
+
+            userId,
+
+            transactionId: transaction.id,
+
+            type: "STOCK_IN",
+
+            quantity: item.quantity,
+
+            stockBefore: product.stock,
+
+            stockAfter: product.stock + item.quantity,
+
+            description: `Stock kembali karena pembatalan transaksi ${transaction.invoiceNumber}`,
+          },
+        });
+      }
+
+      // =========================
+      // ROLLBACK CUSTOMER SPENDING
+      // =========================
+
+      await tx.customer.update({
+        where: {
+          id: transaction.customerId,
+        },
+
+        data: {
+          totalSpent: {
+            decrement: transaction.totalAmount,
+          },
+        },
+      });
+
+// =========================
+// ROLLBACK LOYALTY POINT
+// =========================
+
+const points =
+  Math.floor(
+    Number(transaction.totalAmount) / 10000
   );
 
 
+if (points > 0) {
+
+
+  const loyaltyAccount =
+    await tx.loyaltyAccount.findUnique({
+
+      where: {
+
+        customerId:
+          transaction.customerId,
+
+      },
+
+    });
+
+
+
+  if (loyaltyAccount) {
+
+
+    const newPoints =
+      loyaltyAccount.points - points;
+
+
+
+    await tx.loyaltyAccount.update({
+
+      where: {
+
+        id:
+          loyaltyAccount.id,
+
+      },
+
+
+      data: {
+
+        points:
+          newPoints < 0
+            ? 0
+            : newPoints,
+
+      },
+
+    });
+
+
+
+    await tx.loyaltyHistory.create({
+
+      data: {
+
+        loyaltyAccountId:
+          loyaltyAccount.id,
+
+
+        transactionId:
+          transaction.id,
+
+
+        type:
+          "ROLLBACK",
+
+
+        points:
+          -points,
+
+
+        description:
+          `Rollback reward transaksi ${transaction.invoiceNumber}`,
+
+      },
+
+    });
+
+
+  }
+
+}
+
+      // =========================
+      // CREATE AUDIT LOG
+      // =========================
+
+      const oldStatus = String(transaction.status);
+
+      const newStatus = String(status);
+
+      if (oldStatus !== newStatus) {
+        await createAuditLog({
+          userId,
+
+          action: "UPDATE",
+
+          module: "TRANSACTION",
+
+          description: `Mengubah status transaksi ${transaction.invoiceNumber} menjadi ${newStatus}`,
+        });
+      }
+    }
+
+    // =========================
+    // UPDATE STATUS
+    // =========================
+
+    return await tx.transaction.update({
+      where: {
+        id,
+      },
+
+      data: {
+        status,
+      },
+
+      include: {
+        customer: {
+          select: {
+            id: true,
+
+            name: true,
+          },
+        },
+
+        items: true,
+      },
+    });
+  });
 }

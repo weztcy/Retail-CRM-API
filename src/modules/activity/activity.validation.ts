@@ -6,25 +6,7 @@ import { z } from "zod";
 // CREATE ACTIVITY
 // =========================
 
-export const createActivitySchema =
-z.object({
-
-
-  customerId: z
-    .string()
-    .uuid(
-      "Customer ID tidak valid"
-    ),
-
-
-
-  userId: z
-    .string()
-    .uuid(
-      "User ID tidak valid"
-    ),
-
-
+export const createActivitySchema = z.object({
 
   type: z.enum([
 
@@ -43,20 +25,14 @@ z.object({
   ]),
 
 
-
   subject: z
     .string()
-    .min(
-      3,
-      "Subject minimal 3 karakter"
-    ),
-
+    .min(3),
 
 
   description: z
     .string()
     .optional(),
-
 
 });
 

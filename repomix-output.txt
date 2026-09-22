@@ -178,6 +178,22 @@ src/
           route.ts
         route.ts
       dashboard/
+        customers/
+          growth/
+            route.ts
+          membership/
+            route.ts
+          top-customers/
+            route.ts
+        inventory/
+          history/
+            route.ts
+          route.ts
+        loyalty/
+          route.ts
+        products/
+          low-stock/
+            route.ts
         sales/
           route.ts
         summary/
@@ -231,6 +247,9 @@ src/
       jwt.utils.ts
       permission.ts
     customer/
+      customer.activity.service.ts
+      customer.activity.types.ts
+      customer.activity.validation.ts
       customer.loyalty.service.ts
       customer.segment.service.ts
       customer.service.ts
@@ -238,6 +257,10 @@ src/
       customer.validation.ts
     dashboard/
       dashboard.service.ts
+    inventory/
+      inventory.service.ts
+      inventory.types.ts
+      inventory.validation.ts
     product/
       product.service.ts
       product.types.ts
@@ -263,6 +286,7 @@ src/
     validate.ts
   middleware.ts
 .env.example
+.gitattributes
 .gitignore
 eslint.config.mjs
 next.config.ts
@@ -275,6 +299,807 @@ tsconfig.json
 ================================================================
 Files
 ================================================================
+
+================
+File: src/app/api/dashboard/customers/growth/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getCustomerGrowth,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET CUSTOMER GROWTH
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getCustomerGrowth();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Customer growth berhasil diambil"
+
+    );
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+}
+
+================
+File: src/app/api/dashboard/customers/membership/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getMembershipDistribution,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET MEMBERSHIP DISTRIBUTION
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getMembershipDistribution();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Membership distribution berhasil diambil"
+
+    );
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+}
+
+================
+File: src/app/api/dashboard/customers/top-customers/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getTopCustomers,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET TOP CUSTOMERS
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getTopCustomers();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Top customer berhasil diambil"
+
+    );
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+}
+
+================
+File: src/app/api/dashboard/inventory/history/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getInventoryHistory,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET INVENTORY HISTORY
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getInventoryHistory();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Inventory history berhasil diambil"
+
+    );
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+
+}
+
+================
+File: src/app/api/dashboard/inventory/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getInventoryAnalytics,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET INVENTORY ANALYTICS
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getInventoryAnalytics();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Inventory analytics berhasil diambil"
+
+    );
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+
+}
+
+================
+File: src/app/api/dashboard/loyalty/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getLoyaltyAnalytics,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET LOYALTY ANALYTICS
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getLoyaltyAnalytics();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Loyalty analytics berhasil diambil"
+
+    );
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+
+}
+
+================
+File: src/app/api/dashboard/products/low-stock/route.ts
+================
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  getLowStockProducts,
+} from "@/modules/dashboard/dashboard.service";
+
+
+
+// =========================
+// GET LOW STOCK PRODUCTS
+// =========================
+
+export async function GET() {
+
+
+  try {
+
+
+    const data =
+      await getLowStockProducts();
+
+
+
+    return successResponse(
+
+      data,
+
+      "Low stock product berhasil diambil"
+
+    );
+
+
+
+  } catch(error) {
+
+
+    return handleError(error);
+
+
+  }
+
+
+}
+
+================
+File: src/modules/customer/customer.activity.service.ts
+================
+import { prisma } from "@/lib/prisma";
+
+import {
+  createAuditLog,
+} from "@/modules/audit/audit.service";
+
+import {
+  ApiError,
+} from "@/utils/errors/api-error";
+
+import type {
+  CreateCustomerActivityInput,
+} from "./customer.activity.types";
+
+
+// =========================
+// CREATE CUSTOMER ACTIVITY
+// =========================
+
+export async function createCustomerActivity(
+
+  customerId: string,
+
+  data: CreateCustomerActivityInput,
+
+  userId: string
+
+) {
+
+
+  const customer =
+
+    await prisma.customer.findUnique({
+
+      where: {
+
+        id: customerId,
+
+      },
+
+
+      select: {
+
+        id: true,
+
+        customerCode: true,
+
+      },
+
+    });
+
+
+
+
+  if (!customer) {
+
+    throw new ApiError(
+
+      "Customer tidak ditemukan",
+
+      404
+
+    );
+
+  }
+
+
+
+
+  const activity =
+
+    await prisma.customerActivity.create({
+
+      data: {
+
+
+        customerId,
+
+
+        userId,
+
+
+        type: data.type,
+
+
+        subject: data.subject,
+
+
+        description: data.description,
+
+
+        status: data.status ?? "PENDING",
+
+
+      },
+
+
+    });
+
+
+
+
+
+  await createAuditLog({
+
+    userId,
+
+
+    action: "CREATE",
+
+
+    module: "CUSTOMER_ACTIVITY",
+
+
+    description:
+
+      `Membuat activity customer ${customer.customerCode}`,
+
+  });
+
+
+
+
+
+  return activity;
+
+
+}
+
+
+
+
+// =========================
+// GET CUSTOMER ACTIVITIES
+// =========================
+
+export async function getCustomerActivities(
+
+  customerId: string
+
+) {
+
+
+  const customer =
+
+    await prisma.customer.findUnique({
+
+      where: {
+
+        id: customerId,
+
+      },
+
+
+      select: {
+
+        id: true,
+
+        customerCode: true,
+
+        name: true,
+
+      },
+
+    });
+
+
+
+
+  if (!customer) {
+
+    throw new ApiError(
+
+      "Customer tidak ditemukan",
+
+      404
+
+    );
+
+  }
+
+
+
+
+  return await prisma.customerActivity.findMany({
+
+    where: {
+
+      customerId,
+
+    },
+
+
+    orderBy: {
+
+      createdAt: "desc",
+
+    },
+
+
+    include: {
+
+
+      user: {
+
+        select: {
+
+          id: true,
+
+          name: true,
+
+        },
+
+      },
+
+    },
+
+  });
+
+
+}
+
+================
+File: src/modules/customer/customer.activity.types.ts
+================
+export interface CreateCustomerActivityInput {
+
+  type:
+    | "CALL"
+    | "WHATSAPP"
+    | "EMAIL"
+    | "MEETING"
+    | "COMPLAINT"
+    | "NOTE";
+
+
+  subject: string;
+
+
+  description?: string;
+
+
+  status?:
+    | "PENDING"
+    | "PROCESS"
+    | "DONE"
+    | "CANCELLED";
+
+}
+
+================
+File: src/modules/customer/customer.activity.validation.ts
+================
+import { z } from "zod";
+
+
+// =========================
+// CREATE CUSTOMER ACTIVITY
+// =========================
+
+export const createCustomerActivitySchema = z.object({
+
+  type: z.enum([
+
+    "CALL",
+
+    "WHATSAPP",
+
+    "EMAIL",
+
+    "MEETING",
+
+    "COMPLAINT",
+
+    "NOTE",
+
+  ]),
+
+
+  subject: z
+    .string()
+    .min(3, "Subject minimal 3 karakter"),
+
+
+  description: z
+    .string()
+    .optional(),
+
+
+  status: z
+    .enum([
+
+      "PENDING",
+
+      "PROCESS",
+
+      "DONE",
+
+      "CANCELLED",
+
+    ])
+    .optional(),
+
+});
+
+================
+File: src/modules/inventory/inventory.service.ts
+================
+import {
+  prisma,
+} from "@/lib/prisma";
+
+
+import type {
+  CreateInventoryTransactionInput,
+} from "./inventory.types";
+
+
+
+// =========================
+// CREATE INVENTORY TRANSACTION
+// =========================
+
+export async function createInventoryTransaction(
+  data: CreateInventoryTransactionInput
+) {
+
+
+  return await prisma.inventoryTransaction.create({
+
+    data: {
+
+      productId:
+        data.productId,
+
+
+      userId:
+        data.userId,
+
+
+      transactionId:
+        data.transactionId,
+
+
+      type:
+        data.type,
+
+
+      quantity:
+        data.quantity,
+
+
+      stockBefore:
+        data.stockBefore,
+
+
+      stockAfter:
+        data.stockAfter,
+
+
+      description:
+        data.description,
+
+    },
+
+
+  });
+
+
+}
+
+================
+File: src/modules/inventory/inventory.types.ts
+================
+export type CreateInventoryTransactionInput = {
+
+  productId: string;
+
+  userId: string;
+
+  transactionId?: string;
+
+  type:
+    | "STOCK_OUT"
+    | "STOCK_IN"
+    | "ADJUSTMENT";
+
+  quantity: number;
+
+  stockBefore: number;
+
+  stockAfter: number;
+
+  description?: string;
+
+};
+
+================
+File: src/modules/inventory/inventory.validation.ts
+================
+import {
+  z,
+} from "zod";
+
+
+export const createInventoryTransactionSchema =
+
+z.object({
+
+  productId:
+    z.string().uuid(),
+
+
+  userId:
+    z.string().uuid(),
+
+
+  transactionId:
+    z.string().uuid().optional(),
+
+
+  type:
+    z.enum([
+
+      "STOCK_OUT",
+
+      "STOCK_IN",
+
+      "ADJUSTMENT",
+
+    ]),
+
+
+  quantity:
+    z.number().int().positive(),
+
+
+  stockBefore:
+    z.number().int(),
+
+
+  stockAfter:
+    z.number().int(),
+
+
+  description:
+    z.string().optional(),
+
+});
 
 ================
 File: .agents/skills/prisma-cli/references/agent-safety.md
@@ -11437,6 +12262,8 @@ model User {
   refreshTokens RefreshToken[]
 
   transactions Transaction[]
+
+  inventoryTransactions InventoryTransaction[]
 }
 
 // =========================
@@ -11536,6 +12363,8 @@ model Product {
 
   transactionItems TransactionItem[]
 
+  inventoryTransactions InventoryTransaction[]
+
   @@index([name])
   @@index([category])
 }
@@ -11577,6 +12406,10 @@ model Transaction {
 
   items TransactionItem[]
 
+  inventoryTransactions InventoryTransaction[]
+
+  loyaltyHistories LoyaltyHistory[]
+
   @@index([customerId])
   @@index([userId])
   @@index([invoiceNumber])
@@ -11610,24 +12443,6 @@ model TransactionItem {
 
   @@index([transactionId])
   @@index([productId])
-}
-
-// =========================
-// LOYALTY
-// =========================
-
-model LoyaltyAccount {
-  id String @id @default(uuid())
-
-  customerId String @unique
-
-  points Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
 
 // =========================
@@ -11674,6 +12489,90 @@ model RefreshToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+// =========================
+// INVENTORY TRANSACTION
+// =========================
+
+model InventoryTransaction {
+  id String @id @default(uuid())
+
+  productId String
+
+  userId String
+
+  transactionId String?
+
+  type InventoryType
+
+  quantity Int
+
+  stockBefore Int
+
+  stockAfter Int
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
+
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([productId])
+  @@index([userId])
+  @@index([transactionId])
+}
+
+// =========================
+// LOYALTY
+// =========================
+
+model LoyaltyAccount {
+  id String @id @default(uuid())
+
+  customerId String @unique
+
+  points Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  histories LoyaltyHistory[]
+}
+
+// =========================
+// LOYALTY HISTORY
+// =========================
+
+model LoyaltyHistory {
+  id String @id @default(uuid())
+
+  loyaltyAccountId String
+
+  transactionId String?
+
+  type LoyaltyHistoryType
+
+  points Int
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  loyaltyAccount LoyaltyAccount @relation(fields: [loyaltyAccountId], references: [id], onDelete: Cascade)
+
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([loyaltyAccountId])
+  @@index([transactionId])
+  @@index([createdAt])
 }
 
 // =========================
@@ -11764,6 +12663,20 @@ enum TransactionStatus {
   CANCELLED
 }
 
+enum InventoryType {
+  STOCK_OUT
+
+  STOCK_IN
+
+  ADJUSTMENT
+}
+
+enum LoyaltyHistoryType {
+  EARN
+
+  ROLLBACK
+}
+
 ================
 File: prisma/seed.ts
 ================
@@ -11850,6 +12763,31 @@ main()
     await prisma.$disconnect();
 
   });
+
+================
+File: public/file.svg
+================
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+
+================
+File: public/globe.svg
+================
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+
+================
+File: public/next.svg
+================
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+
+================
+File: public/vercel.svg
+================
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+
+================
+File: public/window.svg
+================
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
 
 ================
 File: src/app/api/activities/[id]/status/route.ts
@@ -12638,6 +13576,11 @@ export async function POST(
 File: src/app/api/customers/[id]/activities/route.ts
 ================
 import {
+  NextRequest,
+} from "next/server";
+
+
+import {
   successResponse,
   handleError,
 } from "@/utils/response";
@@ -12649,19 +13592,31 @@ import {
 
 
 import {
+  getCurrentUser,
+} from "@/modules/auth/get-current-user";
+
+
+import {
   activityCustomerIdSchema,
+  createActivitySchema,
 } from "@/modules/activity/activity.validation";
 
 
 import {
   getCustomerActivities,
+  createActivity,
 } from "@/modules/activity/activity.service";
 
 
 
+
+// =========================
+// GET CUSTOMER ACTIVITIES
+// =========================
+
 export async function GET(
 
-  _request: Request,
+  request: NextRequest,
 
   context: {
     params: Promise<{
@@ -12675,8 +13630,15 @@ export async function GET(
   try {
 
 
-    const { id } =
-      await context.params;
+    await getCurrentUser(
+      request
+    );
+
+
+
+    const {
+      id
+    } = await context.params;
 
 
 
@@ -12711,11 +13673,129 @@ export async function GET(
     );
 
 
+  } catch(error) {
+
+
+    return handleError(
+      error
+    );
+
+
+  }
+
+}
+
+
+
+
+
+
+
+// =========================
+// CREATE CUSTOMER ACTIVITY
+// =========================
+
+export async function POST(
+
+  request: NextRequest,
+
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+
+) {
+
+
+  try {
+
+
+    const user =
+      await getCurrentUser(
+        request
+      );
+
+
+
+    const {
+      id
+    } = await context.params;
+
+
+
+    const params =
+      validate(
+
+        activityCustomerIdSchema,
+
+        {
+          customerId: id,
+        }
+
+      );
+
+
+
+    const body =
+      await request.json();
+
+
+
+    const data =
+      validate(
+
+        createActivitySchema,
+
+        body
+
+      );
+
+
+
+    const activity =
+      await createActivity({
+
+        customerId:
+          params.customerId,
+
+
+        userId:
+          user.id,
+
+
+        type:
+          data.type,
+
+
+        subject:
+          data.subject,
+
+
+        description:
+          data.description,
+
+      });
+
+
+
+    return successResponse(
+
+      activity,
+
+      "Aktivitas customer berhasil dibuat",
+
+      201
+
+    );
+
 
   } catch(error) {
 
 
-    return handleError(error);
+    return handleError(
+      error
+    );
 
 
   }
@@ -15266,6 +16346,103 @@ export async function POST(
 }
 
 ================
+File: src/app/globals.css
+================
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html {
+  height: 100%;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+================
+File: src/app/layout.tsx
+================
+import type { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+
+  title: "Retail CRM",
+
+  description: "Retail CRM Backend",
+
+};
+
+
+
+export default function RootLayout({
+
+  children,
+
+}: {
+
+  children: React.ReactNode;
+
+}) {
+
+
+  return (
+
+    <html lang="en">
+
+      <body>
+
+        {children}
+
+      </body>
+
+    </html>
+
+  );
+
+
+}
+
+================
 File: src/lib/jwt.ts
 ================
 import jwt from "jsonwebtoken";
@@ -15668,25 +16845,7 @@ import { z } from "zod";
 // CREATE ACTIVITY
 // =========================
 
-export const createActivitySchema =
-z.object({
-
-
-  customerId: z
-    .string()
-    .uuid(
-      "Customer ID tidak valid"
-    ),
-
-
-
-  userId: z
-    .string()
-    .uuid(
-      "User ID tidak valid"
-    ),
-
-
+export const createActivitySchema = z.object({
 
   type: z.enum([
 
@@ -15705,20 +16864,14 @@ z.object({
   ]),
 
 
-
   subject: z
     .string()
-    .min(
-      3,
-      "Subject minimal 3 karakter"
-    ),
-
+    .min(3),
 
 
   description: z
     .string()
     .optional(),
-
 
 });
 
@@ -18103,6 +19256,579 @@ export async function getTopProducts() {
 
 }
 
+// =========================
+// LOW STOCK PRODUCTS
+// =========================
+
+export async function getLowStockProducts() {
+
+
+  return await prisma.product.findMany({
+
+    where: {
+
+      isActive: true,
+
+      stock: {
+
+        lte: 10,
+
+      },
+
+    },
+
+
+    select: {
+
+      id: true,
+
+      sku: true,
+
+      name: true,
+
+      category: true,
+
+      stock: true,
+
+      price: true,
+
+    },
+
+
+    orderBy: {
+
+      stock: "asc",
+
+    },
+
+  });
+
+
+}
+
+// =========================
+// CUSTOMER GROWTH
+// =========================
+
+export async function getCustomerGrowth() {
+
+
+  const customers =
+    await prisma.customer.findMany({
+
+      select: {
+
+        createdAt: true,
+
+      },
+
+
+      orderBy: {
+
+        createdAt: "asc",
+
+      },
+
+    });
+
+
+
+  const result =
+    customers.reduce(
+
+      (
+        acc,
+        customer
+      ) => {
+
+
+        const month =
+          customer.createdAt
+            .toISOString()
+            .slice(0, 7);
+
+
+
+        const existing =
+          acc.find(
+
+            item =>
+              item.month === month
+
+          );
+
+
+
+        if(existing) {
+
+
+          existing.total += 1;
+
+
+        } else {
+
+
+          acc.push({
+
+            month,
+
+            total: 1,
+
+          });
+
+
+        }
+
+
+
+        return acc;
+
+
+      },
+
+
+      [] as {
+
+        month: string;
+
+        total: number;
+
+      }[]
+
+    );
+
+
+
+  return result;
+
+
+}
+
+
+
+
+
+// =========================
+// TOP CUSTOMERS
+// =========================
+
+export async function getTopCustomers() {
+
+
+  return await prisma.customer.findMany({
+
+    select: {
+
+      id: true,
+
+      customerCode: true,
+
+      name: true,
+
+      phone: true,
+
+      membership: true,
+
+      totalSpent: true,
+
+    },
+
+
+    orderBy: {
+
+      totalSpent: "desc",
+
+    },
+
+
+    take: 10,
+
+  });
+
+
+}
+
+
+
+
+
+// =========================
+// MEMBERSHIP DISTRIBUTION
+// =========================
+
+export async function getMembershipDistribution() {
+
+
+  const customers =
+    await prisma.customer.findMany({
+
+      select: {
+
+        membership: true,
+
+      },
+
+    });
+
+
+
+  const result = {
+
+
+    BRONZE: 0,
+
+
+    SILVER: 0,
+
+
+    GOLD: 0,
+
+
+    PLATINUM: 0,
+
+
+  };
+
+
+
+  customers.forEach(
+
+    customer => {
+
+
+      result[customer.membership]++;
+
+
+    }
+
+  );
+
+
+
+  return result;
+
+
+}
+
+// =========================
+// LOYALTY ANALYTICS
+// =========================
+
+export async function getLoyaltyAnalytics() {
+
+
+  const [
+
+    totalMember,
+
+    totalPoints,
+
+    earnedPoints,
+
+    rollbackPoints,
+
+  ] = await Promise.all([
+
+
+
+    // Total loyalty member
+
+    prisma.loyaltyAccount.count(),
+
+
+
+
+
+    // Total point aktif
+
+    prisma.loyaltyAccount.aggregate({
+
+      _sum: {
+
+        points: true,
+
+      },
+
+    }),
+
+
+
+
+
+    // Total point earned
+
+    prisma.loyaltyHistory.aggregate({
+
+      _sum: {
+
+        points: true,
+
+      },
+
+
+      where: {
+
+        type: "EARN",
+
+      },
+
+    }),
+
+
+
+
+
+    // Total point rollback
+
+    prisma.loyaltyHistory.aggregate({
+
+      _sum: {
+
+        points: true,
+
+      },
+
+
+      where: {
+
+        type: "ROLLBACK",
+
+      },
+
+    }),
+
+
+
+  ]);
+
+
+
+
+  return {
+
+
+    totalMember,
+
+
+    totalPoints:
+
+      totalPoints._sum.points ?? 0,
+
+
+
+    earnedPoints:
+
+      earnedPoints._sum.points ?? 0,
+
+
+
+    rollbackPoints:
+
+      Math.abs(
+
+        rollbackPoints._sum.points ?? 0
+
+      ),
+
+
+  };
+
+
+}
+
+// =========================
+// INVENTORY ANALYTICS
+// =========================
+
+export async function getInventoryAnalytics() {
+
+
+  const [
+
+    totalStockIn,
+
+    totalStockOut,
+
+    totalAdjustment,
+
+  ] = await Promise.all([
+
+
+    prisma.inventoryTransaction.aggregate({
+
+      _sum: {
+
+        quantity: true,
+
+      },
+
+
+      where: {
+
+        type: "STOCK_IN",
+
+      },
+
+    }),
+
+
+
+    prisma.inventoryTransaction.aggregate({
+
+      _sum: {
+
+        quantity: true,
+
+      },
+
+
+      where: {
+
+        type: "STOCK_OUT",
+
+      },
+
+    }),
+
+
+
+    prisma.inventoryTransaction.aggregate({
+
+      _sum: {
+
+        quantity: true,
+
+      },
+
+
+      where: {
+
+        type: "ADJUSTMENT",
+
+      },
+
+    }),
+
+
+  ]);
+
+
+
+  return {
+
+
+    totalStockIn:
+
+      totalStockIn._sum.quantity ?? 0,
+
+
+    totalStockOut:
+
+      totalStockOut._sum.quantity ?? 0,
+
+
+    totalAdjustment:
+
+      totalAdjustment._sum.quantity ?? 0,
+
+
+  };
+
+
+}
+
+
+
+
+
+// =========================
+// INVENTORY HISTORY
+// =========================
+
+export async function getInventoryHistory() {
+
+
+  return await prisma.inventoryTransaction.findMany({
+
+
+    orderBy: {
+
+      createdAt: "desc",
+
+    },
+
+
+    select: {
+
+
+      id: true,
+
+
+      type: true,
+
+
+      quantity: true,
+
+
+      stockBefore: true,
+
+
+      stockAfter: true,
+
+
+      description: true,
+
+
+      createdAt: true,
+
+
+      product: {
+
+
+        select: {
+
+
+          id: true,
+
+
+          sku: true,
+
+
+          name: true,
+
+
+        },
+
+
+      },
+
+
+      user: {
+
+
+        select: {
+
+
+          id: true,
+
+
+          name: true,
+
+
+        },
+
+
+      },
+
+
+    },
+
+
+  });
+
+
+}
+
 ================
 File: src/modules/product/product.service.ts
 ================
@@ -18864,29 +20590,29 @@ export async function createTransaction(
     }
 
     // =========================
-// CREATE TRANSACTION
-// =========================
+    // CREATE TRANSACTION
+    // =========================
 
-const transaction = await tx.transaction.create({
-  data: {
-    invoiceNumber: generateInvoiceNumber(),
+    const transaction = await tx.transaction.create({
+      data: {
+        invoiceNumber: generateInvoiceNumber(),
 
-    customerId: data.customerId,
+        customerId: data.customerId,
 
-    // PERBAIKAN:
-    // gunakan userId dari request
-    // untuk audit log
-    userId,
+        // PERBAIKAN:
+        // gunakan userId dari request
+        // untuk audit log
+        userId,
 
-    totalAmount,
+        totalAmount,
 
-    paymentMethod: data.paymentMethod,
+        paymentMethod: data.paymentMethod,
 
-    paymentStatus: data.paymentStatus ?? "PAID",
+        paymentStatus: data.paymentStatus ?? "PAID",
 
-    notes: data.notes,
-  },
-});
+        notes: data.notes,
+      },
+    });
 
     // =========================
     // CREATE ITEMS
@@ -18907,10 +20633,16 @@ const transaction = await tx.transaction.create({
     });
 
     // =========================
-    // UPDATE STOCK
+    // UPDATE STOCK + INVENTORY LOG
     // =========================
 
     for (const item of data.items) {
+      const product = products.find((p) => p.id === item.productId);
+
+      if (!product) {
+        throw new ApiError("Product tidak ditemukan", 404);
+      }
+
       await tx.product.update({
         where: {
           id: item.productId,
@@ -18920,6 +20652,26 @@ const transaction = await tx.transaction.create({
           stock: {
             decrement: item.quantity,
           },
+        },
+      });
+
+      await tx.inventoryTransaction.create({
+        data: {
+          productId: item.productId,
+
+          userId,
+
+          transactionId: transaction.id,
+
+          type: "STOCK_OUT",
+
+          quantity: item.quantity,
+
+          stockBefore: product.stock,
+
+          stockAfter: product.stock - item.quantity,
+
+          description: `Stock keluar karena transaksi ${transaction.invoiceNumber}`,
         },
       });
     }
@@ -18941,68 +20693,58 @@ const transaction = await tx.transaction.create({
     });
 
     // =========================
-// UPDATE LOYALTY POINT
-// =========================
+    // UPDATE LOYALTY POINT
+    // =========================
 
-const points = Math.floor(totalAmount / 10000);
+    const points = Math.floor(totalAmount / 10000);
 
-if (points > 0) {
+    if (points > 0) {
+      const loyaltyAccount = await tx.loyaltyAccount.upsert({
+        where: {
+          customerId: data.customerId,
+        },
 
-  await tx.loyaltyAccount.upsert({
+        update: {
+          points: {
+            increment: points,
+          },
+        },
 
-    where: {
+        create: {
+          customerId: data.customerId,
 
-      customerId: data.customerId,
+          points,
+        },
+      });
 
-    },
+      await tx.loyaltyHistory.create({
+        data: {
+          loyaltyAccountId: loyaltyAccount.id,
 
+          transactionId: transaction.id,
 
-    update: {
+          type: "EARN",
 
-      points: {
+          points,
 
-        increment: points,
+          description: `Reward transaksi ${transaction.invoiceNumber}`,
+        },
+      });
+    }
 
-      },
+    // =========================
+    // CREATE AUDIT LOG
+    // =========================
 
-    },
+    await createAuditLog({
+      userId,
 
+      action: "CREATE",
 
-    create: {
+      module: "TRANSACTION",
 
-      customerId: data.customerId,
-
-      points,
-
-    },
-
-  });
-
-}
-
-
-// =========================
-// CREATE AUDIT LOG
-// =========================
-
-await createAuditLog({
-
-  userId,
-
-
-  action:
-    "CREATE",
-
-
-  module:
-    "TRANSACTION",
-
-
-  description:
-
-    `Membuat transaksi ${transaction.invoiceNumber}`,
-
-});
+      description: `Membuat transaksi ${transaction.invoiceNumber}`,
+    });
 
     // =========================
     // RETURN TRANSACTION
@@ -19167,278 +20909,239 @@ export async function getTransactionById(id: string) {
 export async function updateTransactionStatus(
   id: string,
 
-  status:
-    | "PENDING"
-    | "PROCESSING"
-    | "COMPLETED"
-    | "CANCELLED",
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED",
 
-    userId: string,
+  userId: string,
 ) {
-
-
-  return await prisma.$transaction(
-
-    async (tx) => {
-
-
-      const transaction =
-        await tx.transaction.findUnique({
-
-          where: {
-
-            id,
-
-          },
-
-
-          include: {
-
-            items: true,
-
-          },
-
-        });
-
-
-
-
-      if (!transaction) {
-
-
-        throw new ApiError(
-
-          "Transaction tidak ditemukan",
-
-          404
-
-        );
-
-
-      }
-
-
-
-
-      // =========================
-      // CANCEL TRANSACTION
-      // =========================
-
-      if (
-
-        status === "CANCELLED"
-
-        &&
-
-        transaction.status !== "CANCELLED"
-
-      ) {
-
-
-
-        // =========================
-        // RESTORE STOCK
-        // =========================
-
-        for (
-
-          const item of transaction.items
-
-        ) {
-
-
-          await tx.product.update({
-
-            where: {
-
-              id:
-                item.productId,
-
-            },
-
-
-            data: {
-
-              stock: {
-
-                increment:
-                  item.quantity,
-
-              },
-
-            },
-
-          });
-
-
-        }
-
-
-
-
-
-        // =========================
-        // ROLLBACK CUSTOMER SPENDING
-        // =========================
-
-        await tx.customer.update({
-
-          where: {
-
-            id:
-              transaction.customerId,
-
-          },
-
-
-          data: {
-
-            totalSpent: {
-
-              decrement:
-                transaction.totalAmount,
-
-            },
-
-          },
-
-        });
-
-
-
-
-
-
-        // =========================
-        // ROLLBACK LOYALTY POINT
-        // =========================
-
-        const points =
-          Math.floor(
-
-            Number(transaction.totalAmount) / 10000
-
-          );
-
-
-
-        if (points > 0) {
-
-
-          await tx.loyaltyAccount.updateMany({
-
-            where: {
-
-              customerId:
-                transaction.customerId,
-
-            },
-
-
-            data: {
-
-              points: {
-
-                decrement:
-                  points,
-
-              },
-
-            },
-
-          });
-
-
-        }
-
-
-      }
-
-
-
-
-
-// =========================
-// CREATE AUDIT LOG
-// =========================
-
-if (
-  transaction.status !== status
-) {
-
-
-  await createAuditLog({
-
-    userId,
-
-
-    action:
-      "UPDATE",
-
-
-    module:
-      "TRANSACTION",
-
-
-    description:
-
-      `Mengubah status transaksi ${transaction.invoiceNumber} menjadi ${status}`,
-
-  });
-
-
-}
-
-
-
-
-// =========================
-// UPDATE STATUS
-// =========================
-
-return await tx.transaction.update({
-
-  where: {
-
-    id,
-
-  },
-
-
-  data: {
-
-    status,
-
-  },
-
-
-  include: {
-
-    customer: {
-
-      select: {
-
-        id: true,
-
-        name: true,
-
+  return await prisma.$transaction(async (tx) => {
+    const transaction = await tx.transaction.findUnique({
+      where: {
+        id,
       },
 
-    },
+      include: {
+        items: true,
+      },
+    });
 
+    if (!transaction) {
+      throw new ApiError(
+        "Transaction tidak ditemukan",
 
-    items: true,
-
-  },
-
-});
-
-
+        404,
+      );
     }
 
+    // =========================
+    // CANCEL TRANSACTION
+    // =========================
+
+    if (status === "CANCELLED" && transaction.status !== "CANCELLED") {
+      // =========================
+      // RESTORE STOCK + INVENTORY LOG
+      // =========================
+
+      for (const item of transaction.items) {
+        const product = await tx.product.findUnique({
+          where: {
+            id: item.productId,
+          },
+        });
+
+        if (!product) {
+          throw new ApiError(
+            "Product tidak ditemukan",
+
+            404,
+          );
+        }
+
+        await tx.product.update({
+          where: {
+            id: item.productId,
+          },
+
+          data: {
+            stock: {
+              increment: item.quantity,
+            },
+          },
+        });
+
+        await tx.inventoryTransaction.create({
+          data: {
+            productId: item.productId,
+
+            userId,
+
+            transactionId: transaction.id,
+
+            type: "STOCK_IN",
+
+            quantity: item.quantity,
+
+            stockBefore: product.stock,
+
+            stockAfter: product.stock + item.quantity,
+
+            description: `Stock kembali karena pembatalan transaksi ${transaction.invoiceNumber}`,
+          },
+        });
+      }
+
+      // =========================
+      // ROLLBACK CUSTOMER SPENDING
+      // =========================
+
+      await tx.customer.update({
+        where: {
+          id: transaction.customerId,
+        },
+
+        data: {
+          totalSpent: {
+            decrement: transaction.totalAmount,
+          },
+        },
+      });
+
+// =========================
+// ROLLBACK LOYALTY POINT
+// =========================
+
+const points =
+  Math.floor(
+    Number(transaction.totalAmount) / 10000
   );
 
 
+if (points > 0) {
+
+
+  const loyaltyAccount =
+    await tx.loyaltyAccount.findUnique({
+
+      where: {
+
+        customerId:
+          transaction.customerId,
+
+      },
+
+    });
+
+
+
+  if (loyaltyAccount) {
+
+
+    const newPoints =
+      loyaltyAccount.points - points;
+
+
+
+    await tx.loyaltyAccount.update({
+
+      where: {
+
+        id:
+          loyaltyAccount.id,
+
+      },
+
+
+      data: {
+
+        points:
+          newPoints < 0
+            ? 0
+            : newPoints,
+
+      },
+
+    });
+
+
+
+    await tx.loyaltyHistory.create({
+
+      data: {
+
+        loyaltyAccountId:
+          loyaltyAccount.id,
+
+
+        transactionId:
+          transaction.id,
+
+
+        type:
+          "ROLLBACK",
+
+
+        points:
+          -points,
+
+
+        description:
+          `Rollback reward transaksi ${transaction.invoiceNumber}`,
+
+      },
+
+    });
+
+
+  }
+
+}
+
+      // =========================
+      // CREATE AUDIT LOG
+      // =========================
+
+      const oldStatus = String(transaction.status);
+
+      const newStatus = String(status);
+
+      if (oldStatus !== newStatus) {
+        await createAuditLog({
+          userId,
+
+          action: "UPDATE",
+
+          module: "TRANSACTION",
+
+          description: `Mengubah status transaksi ${transaction.invoiceNumber} menjadi ${newStatus}`,
+        });
+      }
+    }
+
+    // =========================
+    // UPDATE STATUS
+    // =========================
+
+    return await tx.transaction.update({
+      where: {
+        id,
+      },
+
+      data: {
+        status,
+      },
+
+      include: {
+        customer: {
+          select: {
+            id: true,
+
+            name: true,
+          },
+        },
+
+        items: true,
+      },
+    });
+  });
 }
 
 ================
@@ -20636,213 +22339,10 @@ JWT_ACCESS_EXPIRE=
 JWT_REFRESH_EXPIRE=
 
 ================
-File: prisma7.config.ts
+File: .gitattributes
 ================
-import "dotenv/config";
-
-import { defineConfig } from "prisma/config";
-
-
-export default defineConfig({
-
-  schema: "prisma/schema.prisma",
-
-
-  migrations: {
-    seed: "tsx prisma/seed.ts",
-  },
-
-
-  datasource: {
-    url: process.env.DATABASE_URL,
-  },
-
-});
-
-================
-File: skills-lock.json
-================
-{
-  "version": 1,
-  "skills": {
-    "prisma-cli": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-cli/SKILL.md",
-      "computedHash": "b92e55aef78f6796d81433c44738a6733211a04c16e65cbad6d42c5f71092aab"
-    },
-    "prisma-client-api": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-client-api/SKILL.md",
-      "computedHash": "5dcc0793337151efa73a444e5adbc7e1c24180778e83b4fe94c9109c391bd333"
-    },
-    "prisma-compute": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-compute/SKILL.md",
-      "computedHash": "e5695a3c6f35428e96df30ae662716bd4c9d9074f72cc9334b3050445a1bd4e2"
-    },
-    "prisma-database-setup": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-database-setup/SKILL.md",
-      "computedHash": "0911d9454bd48df3badd23a50fd90a280eabb15dcbd472c14e7b729075dadefb"
-    },
-    "prisma-driver-adapter-implementation": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-driver-adapter-implementation/SKILL.md",
-      "computedHash": "07484627aea6cce4d0f94b4090ff9acc0caa7e104f9988b95abecf80132f4103"
-    },
-    "prisma-mongodb-upgrade": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-mongodb-upgrade/SKILL.md",
-      "computedHash": "f9ba440e88ca4cec9801d04762296e29e99ca08cb8a8156e4f783ecf90279c8f"
-    },
-    "prisma-postgres": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-postgres/SKILL.md",
-      "computedHash": "d669fbd0d8017d16c967f18b20e1c1345cd4a2a0076d762459bfef79f551f655"
-    },
-    "prisma-postgres-setup": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-postgres-setup/SKILL.md",
-      "computedHash": "c89d3aa91285d8e4964fcaa5238c99a3d3c20b617e032e731cf632330a85a5a6"
-    },
-    "prisma-upgrade-v7": {
-      "source": "prisma/skills",
-      "sourceType": "github",
-      "skillPath": "prisma-upgrade-v7/SKILL.md",
-      "computedHash": "dcc6c71adca6b22f37c5bda5ac7fd63c3bb59495596a22e06a29c7c85371558f"
-    }
-  }
-}
-
-================
-File: public/file.svg
-================
-<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
-
-================
-File: public/globe.svg
-================
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
-
-================
-File: public/next.svg
-================
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
-
-================
-File: public/vercel.svg
-================
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
-
-================
-File: public/window.svg
-================
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
-
-================
-File: src/app/globals.css
-================
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
-
-================
-File: src/app/layout.tsx
-================
-import type { Metadata } from "next";
-
-
-export const metadata: Metadata = {
-
-  title: "Retail CRM",
-
-  description: "Retail CRM Backend",
-
-};
-
-
-
-export default function RootLayout({
-
-  children,
-
-}: {
-
-  children: React.ReactNode;
-
-}) {
-
-
-  return (
-
-    <html lang="en">
-
-      <body>
-
-        {children}
-
-      </body>
-
-    </html>
-
-  );
-
-
-}
+# Auto detect text files and perform LF normalization
+* text=auto
 
 ================
 File: .gitignore
@@ -21017,44 +22517,91 @@ File: package.json
 }
 
 ================
-File: README.md
+File: prisma7.config.ts
 ================
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+import "dotenv/config";
 
-## Getting Started
+import { defineConfig } from "prisma/config";
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+export default defineConfig({
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  schema: "prisma/schema.prisma",
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  migrations: {
+    seed: "tsx prisma/seed.ts",
+  },
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+  datasource: {
+    url: process.env.DATABASE_URL,
+  },
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+});
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+================
+File: skills-lock.json
+================
+{
+  "version": 1,
+  "skills": {
+    "prisma-cli": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-cli/SKILL.md",
+      "computedHash": "b92e55aef78f6796d81433c44738a6733211a04c16e65cbad6d42c5f71092aab"
+    },
+    "prisma-client-api": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-client-api/SKILL.md",
+      "computedHash": "5dcc0793337151efa73a444e5adbc7e1c24180778e83b4fe94c9109c391bd333"
+    },
+    "prisma-compute": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-compute/SKILL.md",
+      "computedHash": "e5695a3c6f35428e96df30ae662716bd4c9d9074f72cc9334b3050445a1bd4e2"
+    },
+    "prisma-database-setup": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-database-setup/SKILL.md",
+      "computedHash": "0911d9454bd48df3badd23a50fd90a280eabb15dcbd472c14e7b729075dadefb"
+    },
+    "prisma-driver-adapter-implementation": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-driver-adapter-implementation/SKILL.md",
+      "computedHash": "07484627aea6cce4d0f94b4090ff9acc0caa7e104f9988b95abecf80132f4103"
+    },
+    "prisma-mongodb-upgrade": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-mongodb-upgrade/SKILL.md",
+      "computedHash": "f9ba440e88ca4cec9801d04762296e29e99ca08cb8a8156e4f783ecf90279c8f"
+    },
+    "prisma-postgres": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-postgres/SKILL.md",
+      "computedHash": "d669fbd0d8017d16c967f18b20e1c1345cd4a2a0076d762459bfef79f551f655"
+    },
+    "prisma-postgres-setup": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-postgres-setup/SKILL.md",
+      "computedHash": "c89d3aa91285d8e4964fcaa5238c99a3d3c20b617e032e731cf632330a85a5a6"
+    },
+    "prisma-upgrade-v7": {
+      "source": "prisma/skills",
+      "sourceType": "github",
+      "skillPath": "prisma-upgrade-v7/SKILL.md",
+      "computedHash": "dcc6c71adca6b22f37c5bda5ac7fd63c3bb59495596a22e06a29c7c85371558f"
+    }
+  }
+}
 
 ================
 File: tsconfig.json
@@ -21093,6 +22640,46 @@ File: tsconfig.json
   ],
   "exclude": ["node_modules"]
 }
+
+================
+File: README.md
+================
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 
 
