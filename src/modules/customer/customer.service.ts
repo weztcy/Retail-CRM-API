@@ -14,9 +14,7 @@ import { ApiError } from "@/utils/errors/api-error";
 
 import bcrypt from "bcrypt";
 
-import {
-  unlink,
-} from "fs/promises";
+import { unlink } from "fs/promises";
 
 import path from "path";
 
@@ -427,73 +425,33 @@ export async function updateCustomer(
 // DELETE OLD CUSTOMER IMAGE
 // =========================
 
-async function deleteCustomerImage(
-
-  imageUrl?: string | null,
-
-) {
-
-
-  if(
-    !imageUrl
-  ){
-
+async function deleteCustomerImage(imageUrl?: string | null) {
+  if (!imageUrl) {
     return;
-
   }
-
-
 
   // hanya hapus file customer upload
 
-  if(
-    !imageUrl.startsWith(
-      "/uploads/customers/"
-    )
-  ){
-
+  if (!imageUrl.startsWith("/uploads/customers/")) {
     return;
-
   }
 
+  const filePath = path.join(
+    process.cwd(),
 
+    "public",
 
-  const filePath =
-
-    path.join(
-
-      process.cwd(),
-
-      "public",
-
-      imageUrl,
-
-    );
-
-
+    imageUrl,
+  );
 
   try {
-
-
-    await unlink(
-      filePath
-    );
-
-
-  } catch(error){
-
-
+    await unlink(filePath);
+  } catch (error) {
     // jika file sudah tidak ada,
     // jangan gagalkan update profile
 
-    console.warn(
-      "Old customer image tidak ditemukan",
-      imageUrl
-    );
-
-
+    console.warn("Old customer image tidak ditemukan", imageUrl);
   }
-
 }
 
 // =========================
@@ -506,22 +464,18 @@ export async function updateCustomerProfile(
   data: UpdateCustomerProfileInput,
 ) {
   const customer = await prisma.customer.findUnique({
+    where: {
+      id: customerId,
+    },
 
-  where:{
-    id:customerId,
-  },
+    select: {
+      id: true,
 
-  select:{
+      customerCode: true,
 
-    id:true,
-
-    customerCode:true,
-
-    imageUrl:true,
-
-  },
-
-});
+      imageUrl: true,
+    },
+  });
 
   if (!customer) {
     throw new ApiError("Customer tidak ditemukan", 404);
@@ -550,10 +504,9 @@ export async function updateCustomerProfile(
   }
 
   const updatedCustomer = await prisma.customer.update({
-
-  where: {
-    id: customerId,
-  },
+    where: {
+      id: customerId,
+    },
 
     data: updateData,
 
@@ -577,24 +530,12 @@ export async function updateCustomerProfile(
   });
 
   // =========================
-// DELETE OLD IMAGE
-// =========================
+  // DELETE OLD IMAGE
+  // =========================
 
-if(
-
-  data.imageUrl &&
-
-  data.imageUrl !== customer.imageUrl
-
-){
-
-  await deleteCustomerImage(
-
-    customer.imageUrl
-
-  );
-
-}
+  if (data.imageUrl && data.imageUrl !== customer.imageUrl) {
+    await deleteCustomerImage(customer.imageUrl);
+  }
 
   return updatedCustomer;
 }

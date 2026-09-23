@@ -1,22 +1,11 @@
 import { z } from "zod";
 
-
 export const createUserSchema = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter"),
 
-  name: z
-    .string()
-    .min(3, "Nama minimal 3 karakter"),
+  email: z.string().email("Email tidak valid"),
 
-
-  email: z
-    .string()
-    .email("Email tidak valid"),
-
-
-  password: z
-    .string()
-    .min(6, "Password minimal 6 karakter"),
-
+  password: z.string().min(6, "Password minimal 6 karakter"),
 
   role: z.enum([
     "SUPER_ADMIN",
@@ -25,53 +14,82 @@ export const createUserSchema = z.object({
     "SALES",
     "CUSTOMER_SERVICE",
   ]),
-
 });
 
-
-
 export const updateUserSchema = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter").optional(),
+
+  email: z.string().email("Email tidak valid").optional(),
+
+  role: z
+    .enum(["SUPER_ADMIN", "ADMIN", "MANAGER", "SALES", "CUSTOMER_SERVICE"])
+    .optional(),
+
+  isActive: z.boolean().optional(),
+});
+
+// =========================
+// UPDATE USER PROFILE
+// SELF UPDATE
+// =========================
+
+export const updateUserProfileSchema = z.object({
 
   name: z
+
     .string()
-    .min(3, "Nama minimal 3 karakter")
+
+    .min(
+      3,
+      "Nama minimal 3 karakter"
+    )
+
     .optional(),
+
 
 
   email: z
+
     .string()
-    .email("Email tidak valid")
+
+    .email(
+      "Email tidak valid"
+    )
+
     .optional(),
 
 
-  role: z.enum([
-    "SUPER_ADMIN",
-    "ADMIN",
-    "MANAGER",
-    "SALES",
-    "CUSTOMER_SERVICE",
-  ])
-  .optional(),
+
+  password: z
+
+    .string()
+
+    .min(
+      6,
+      "Password minimal 6 karakter"
+    )
+
+    .optional(),
 
 
-  isActive: z
-    .boolean()
+
+  imageUrl: z
+
+    .string()
+
+    .startsWith(
+      "/uploads/",
+      "Image URL tidak valid"
+    )
+
     .optional(),
 
 });
 
-
-
 export const userIdSchema = z.object({
-
-  id: z
-    .string()
-    .uuid("User ID tidak valid"),
-
+  id: z.string().uuid("User ID tidak valid"),
 });
 
 export const updateStatusSchema = z.object({
-
   isActive: z.boolean(),
-
 });

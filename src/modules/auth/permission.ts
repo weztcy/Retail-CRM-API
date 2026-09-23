@@ -130,3 +130,43 @@ export async function requireCustomer(
   return user;
 
 }
+
+// =========================
+// REQUIRE USER
+// =========================
+
+export async function requireUser(
+
+  request:NextRequest,
+
+) {
+
+
+  const user =
+    await getCurrentUser(
+      request,
+    );
+
+
+
+  if(
+    user.type !== "USER"
+  ) {
+
+
+    throw new ApiError(
+
+      "Forbidden",
+
+      403,
+
+    );
+
+
+  }
+
+
+
+  return user;
+
+} 

@@ -16,6 +16,7 @@ export interface CreateUserInput {
 }
 
 
+
 export interface UpdateUserInput {
 
   name?: string;
@@ -32,6 +33,27 @@ export interface UpdateUserInput {
   isActive?: boolean;
 
 }
+
+
+
+// =========================
+// UPDATE USER PROFILE
+// SELF UPDATE
+// =========================
+
+export interface UpdateUserProfileInput {
+
+  name?: string;
+
+  email?: string;
+
+  password?: string;
+
+  imageUrl?: string;
+
+}
+
+
 
 export interface UserResponse {
 
