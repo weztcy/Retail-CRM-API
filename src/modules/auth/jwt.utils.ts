@@ -1,8 +1,69 @@
 import {
   SignJWT,
   jwtVerify,
+  JWTPayload,
 } from "jose";
 
+
+import type {
+  Role,
+} from "@/generated/prisma/client";
+
+
+
+// =========================
+// JWT TYPES
+// =========================
+
+
+export interface UserTokenPayload 
+extends JWTPayload {
+
+
+  id:string;
+
+
+  type:"USER";
+
+
+  email:string;
+
+
+  role:Role;
+
+
+}
+
+
+
+export interface CustomerTokenPayload 
+extends JWTPayload {
+
+
+  id:string;
+
+  type:"CUSTOMER";
+
+  phone:string;
+
+  email:string | null;
+}
+
+
+
+export type AuthTokenPayload =
+
+  | UserTokenPayload
+
+  | CustomerTokenPayload;
+
+
+
+
+
+// =========================
+// JWT SECRET
+// =========================
 
 
 const JWT_SECRET =
@@ -10,21 +71,28 @@ const JWT_SECRET =
 
 
 
-if (!JWT_SECRET) {
+if(!JWT_SECRET){
+
 
   throw new Error(
     "JWT_SECRET belum tersedia"
   );
+
 
 }
 
 
 
 const secret =
+
   new TextEncoder()
+
     .encode(
+
       JWT_SECRET
+
     );
+
 
 
 
@@ -33,33 +101,51 @@ const secret =
 // GENERATE ACCESS TOKEN
 // =========================
 
+
 export async function generateAccessToken(
-  payload: Record<string, unknown>
-) {
+
+  payload:AuthTokenPayload
+
+):Promise<string>{
 
 
-  return await new SignJWT(payload)
 
-    .setProtectedHeader({
+  return await new SignJWT(
 
-      alg: "HS256",
+    payload
 
-    })
+  )
 
-    .setExpirationTime(
 
-      process.env.JWT_ACCESS_EXPIRE
-      ||
-      "15m"
+  .setProtectedHeader({
 
-    )
+    alg:"HS256",
 
-    .setIssuedAt()
+  })
 
-    .sign(secret);
+
+  .setIssuedAt()
+
+
+
+  .setExpirationTime(
+
+    process.env.JWT_ACCESS_EXPIRE
+
+    ||
+
+    "15m"
+
+  )
+
+
+
+  .sign(secret);
+
 
 
 }
+
 
 
 
@@ -69,33 +155,51 @@ export async function generateAccessToken(
 // GENERATE REFRESH TOKEN
 // =========================
 
+
 export async function generateRefreshToken(
-  payload: Record<string, unknown>
-) {
+
+  payload:AuthTokenPayload
+
+):Promise<string>{
 
 
-  return await new SignJWT(payload)
 
-    .setProtectedHeader({
+  return await new SignJWT(
 
-      alg: "HS256",
+    payload
 
-    })
+  )
 
-    .setExpirationTime(
 
-      process.env.JWT_REFRESH_EXPIRE
-      ||
-      "7d"
+  .setProtectedHeader({
 
-    )
+    alg:"HS256",
 
-    .setIssuedAt()
+  })
 
-    .sign(secret);
+
+  .setIssuedAt()
+
+
+
+  .setExpirationTime(
+
+    process.env.JWT_REFRESH_EXPIRE
+
+    ||
+
+    "7d"
+
+  )
+
+
+
+  .sign(secret);
+
 
 
 }
+
 
 
 
@@ -105,23 +209,34 @@ export async function generateRefreshToken(
 // VERIFY TOKEN
 // =========================
 
+
 export async function verifyToken(
+
   token:string
-) {
+
+):Promise<AuthTokenPayload>{
+
 
 
   const {
+
     payload
+
   } = await jwtVerify(
+
 
     token,
 
+
     secret
+
 
   );
 
 
-  return payload;
+
+  return payload as AuthTokenPayload;
+
 
 
 }

@@ -17,31 +17,57 @@ datasource db {
 // =========================
 
 model User {
+
   id String @id @default(uuid())
+
 
   name String
 
+
   email String @unique
+
 
   passwordHash String
 
+
+  imageUrl String?
+
+
+
   role Role @default(SALES)
+
 
   isActive Boolean @default(true)
 
+
   createdAt DateTime @default(now())
+
 
   updatedAt DateTime @updatedAt
 
+
   activities CustomerActivity[]
+
 
   auditLogs AuditLog[]
 
+
   refreshTokens RefreshToken[]
+
 
   transactions Transaction[]
 
+
   inventoryTransactions InventoryTransaction[]
+
+
+
+  @@index([email])
+
+  @@index([role])
+
+  @@index([isActive])
+
 }
 
 // =========================
@@ -62,13 +88,18 @@ model Customer {
   phone String @unique
 
 
-  email String?
+  email String? @unique
+
+
+  passwordHash String
 
 
   imageUrl String?
 
 
+
   isActive Boolean @default(true)
+
 
 
   gender Gender?
@@ -83,16 +114,20 @@ model Customer {
   city String?
 
 
+
   membership MembershipLevel @default(BRONZE)
 
 
-  totalSpent Decimal @default(0) @db.Decimal(12, 2)
+
+  totalSpent Decimal @default(0) @db.Decimal(12,2)
+
 
 
   createdAt DateTime @default(now())
 
 
   updatedAt DateTime @updatedAt
+
 
 
   transactions Transaction[]
@@ -102,6 +137,9 @@ model Customer {
 
 
   loyalty LoyaltyAccount?
+
+
+  refreshTokens RefreshToken[]
 
 
 
@@ -118,10 +156,11 @@ model Customer {
   @@index([isActive])
 
   @@index([isActive, createdAt])
-  
+
   @@index([isActive, membership])
-  
+
   @@index([isActive, city])
+
 }
 
 // =========================
@@ -294,20 +333,39 @@ model AuditLog {
 // =========================
 
 model RefreshToken {
+
   id String @id @default(uuid())
 
-  userId String
+
+  userId String?
+
+
+  customerId String?
+
 
   token String @unique @db.VarChar(512)
 
+
   expiresAt DateTime
+
 
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+
 
   @@index([userId])
+
+  @@index([customerId])
+
   @@index([expiresAt])
+
 }
 
 // =========================

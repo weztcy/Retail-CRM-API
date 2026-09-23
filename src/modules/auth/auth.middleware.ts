@@ -6,67 +6,97 @@ import {
 } from "./jwt.utils";
 
 
+import type {
+  JwtPayload,
+} from "./auth.types";
+
+
 import {
   ApiError,
 } from "@/utils/errors/api-error";
 
 
 
+
 // =========================
-// AUTHENTICATE USER
+// AUTHENTICATE REQUEST
 // =========================
 
 export async function authenticate(
-  request: NextRequest
-) {
+
+  request:NextRequest,
+
+):Promise<JwtPayload> {
 
 
   const authHeader =
     request.headers.get(
-      "authorization"
+      "authorization",
     );
 
 
 
-  if (!authHeader) {
+  if(!authHeader) {
+
 
     throw new ApiError(
+
       "Unauthorized",
-      401
+
+      401,
+
     );
+
 
   }
 
 
 
-  if (
+
+
+  if(
     !authHeader.startsWith(
-      "Bearer "
+      "Bearer ",
     )
   ) {
 
+
     throw new ApiError(
+
       "Invalid authorization format",
-      401
+
+      401,
+
     );
 
+
   }
+
+
 
 
 
   const token =
-    authHeader.split(" ")[1];
+    authHeader.substring(7);
 
 
 
-  if (!token) {
+
+  if(!token) {
+
 
     throw new ApiError(
+
       "Token tidak ditemukan",
-      401
+
+      401,
+
     );
 
+
   }
+
+
 
 
 
@@ -75,23 +105,55 @@ export async function authenticate(
 
     const payload =
       await verifyToken(
-        token
+        token,
       );
 
 
-    return payload;
+
+    if(
+      !payload.id ||
+      !payload.type
+    ) {
+
+
+      throw new ApiError(
+
+        "Invalid token payload",
+
+        401,
+
+      );
+
+
+    }
 
 
 
-  } catch {
+    return payload as JwtPayload;
+
+
+
+  } catch(error) {
+
+
+    if(error instanceof ApiError) {
+
+      throw error;
+
+    }
+
 
 
     throw new ApiError(
+
       "Invalid token",
-      401
+
+      401,
+
     );
 
 
   }
+
 
 }

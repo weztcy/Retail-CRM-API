@@ -11,6 +11,8 @@ import type {
 
 import { ApiError } from "@/utils/errors/api-error";
 
+import bcrypt from "bcrypt";
+
 // =========================
 // GET ALL CUSTOMERS
 // =========================
@@ -239,79 +241,158 @@ export async function createCustomer(
   data: CreateCustomerInput,
   userId: string,
 ) {
-  const customer = await prisma.customer.create({
-    data: {
-      customerCode: data.customerCode,
 
-      name: data.name,
 
-      phone: data.phone,
+  const defaultPassword =
+    data.password ??
+    data.phone.slice(-6);
 
-      email: data.email,
 
-      imageUrl: data.imageUrl,
 
-      isActive: true,
+  const passwordHash =
+    await bcrypt.hash(
+      defaultPassword,
+      10
+    );
 
-      gender: data.gender,
 
-      birthDate: data.birthDate ? new Date(data.birthDate) : undefined,
 
-      address: data.address,
+  const customer =
+    await prisma.customer.create({
 
-      city: data.city,
+      data: {
+
+        customerCode:
+          data.customerCode,
+
+
+        name:
+          data.name,
+
+
+        phone:
+          data.phone,
+
+
+        email:
+          data.email,
+
+
+        passwordHash,
+
+
+        imageUrl:
+          data.imageUrl,
+
+
+        isActive:true,
+
+
+        gender:
+          data.gender,
+
+
+        birthDate:
+          data.birthDate
+            ? new Date(data.birthDate)
+            : undefined,
+
+
+        address:
+          data.address,
+
+
+        city:
+          data.city,
 
       // =========================
       // CREATE LOYALTY ACCOUNT
       // =========================
 
-      loyalty: {
-        create: {
-          points: 0,
+      loyalty:{
+
+          create:{
+
+            points:0,
+
+          },
+
         },
+
+
       },
-    },
 
-    select: {
-      id: true,
 
-      customerCode: true,
+      select:{
 
-      name: true,
 
-      phone: true,
+        id:true,
 
-      email: true,
 
-      imageUrl: true,
+        customerCode:true,
 
-      membership: true,
 
-      isActive: true,
+        name:true,
 
-      totalSpent: true,
 
-      createdAt: true,
+        phone:true,
 
-      loyalty: {
-        select: {
-          points: true,
+
+        email:true,
+
+
+        imageUrl:true,
+
+
+        membership:true,
+
+
+        isActive:true,
+
+
+        totalSpent:true,
+
+
+        createdAt:true,
+
+
+        loyalty:{
+
+          select:{
+
+            points:true,
+
+          },
+
         },
+
       },
-    },
-  });
+
+
+    });
+
+
 
   await createAuditLog({
+
     userId,
 
-    action: "CREATE",
 
-    module: "CUSTOMER",
+    action:"CREATE",
 
-    description: `Membuat customer ${customer.customerCode}`,
+
+    module:"CUSTOMER",
+
+
+    description:
+      `Membuat customer ${customer.customerCode}`,
+
   });
 
+
+
   return customer;
+
 }
 
 // =========================

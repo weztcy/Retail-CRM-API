@@ -10,19 +10,19 @@ import {
 
 
 import {
-  refreshTokenSchema,
+  userLoginSchema,
 } from "@/modules/auth/auth.validation";
 
 
 import {
-  refreshSession,
+  login,
 } from "@/modules/auth/auth.service";
 
 
 
 
 // =========================
-// REFRESH TOKEN
+// LOGIN USER
 // =========================
 
 export async function POST(
@@ -43,7 +43,7 @@ export async function POST(
     const data =
       validate(
 
-        refreshTokenSchema,
+        userLoginSchema,
 
         body,
 
@@ -52,9 +52,11 @@ export async function POST(
 
 
     const result =
-      await refreshSession(
+      await login(
 
-        data.refreshToken,
+        data.email,
+
+        data.password,
 
       );
 
@@ -64,7 +66,7 @@ export async function POST(
 
       result,
 
-      "Token berhasil diperbarui",
+      "Login berhasil",
 
     );
 

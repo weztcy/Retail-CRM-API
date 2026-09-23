@@ -8,25 +8,80 @@ import {
 } from "./auth.middleware";
 
 
+import type {
+  JwtPayload,
+} from "./auth.types";
+
+
+
+
+// =========================
+// GET CURRENT AUTH
+// =========================
 
 export async function getCurrentUser(
-  request: NextRequest
+
+  request:NextRequest,
+
 ) {
 
 
-  const user =
+  const auth =
     await authenticate(
-      request
+      request,
     );
 
 
+
+  const user =
+    auth as JwtPayload;
+
+
+
+
+  // =========================
+  // USER AUTH
+  // =========================
+
+  if(
+    user.type === "USER"
+  ) {
+
+
+    return {
+
+      id:user.id,
+
+      type:user.type,
+
+      email:user.email,
+
+      role:user.role,
+
+    };
+
+
+  }
+
+
+
+
+
+  // =========================
+  // CUSTOMER AUTH
+  // =========================
+
   return {
 
-    id: String(user.id),
 
-    email: String(user.email),
+    id:user.id,
 
-    role: String(user.role),
+
+    type:user.type,
+
+
+    phone:user.phone,
+
 
   };
 

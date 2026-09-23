@@ -74,107 +74,351 @@ export async function getDashboardSummary(filter?: DashboardFilter) {
 }
 
 // =========================
-// TOP PRODUCTS
+// TOP STOCK OUT PRODUCTS
 // =========================
 
-export async function getTopProducts() {
-  const items = await prisma.transactionItem.findMany({
-    where: {
-      transaction: {
-        status: "COMPLETED",
+export async function getTopStockOutProducts(
+  limit: number = 10,
+) {
+
+
+  const items =
+
+    await prisma.inventoryTransaction.findMany({
+
+      where: {
+
+        type: "STOCK_OUT",
+
       },
-    },
 
-    select: {
-      quantity: true,
 
-      subtotal: true,
+      select: {
 
-      product: {
-        select: {
-          id: true,
+        quantity: true,
 
-          sku: true,
 
-          name: true,
+        product: {
+
+          select: {
+
+            id: true,
+
+            sku: true,
+
+            name: true,
+
+          },
+
         },
+
       },
-    },
-  });
 
-  const result = items.reduce(
-    (acc, item) => {
-      const existing = acc.find((row) => row.productId === item.product.id);
 
-      if (existing) {
-        existing.totalSold += item.quantity;
+    });
 
-        existing.revenue += Number(item.subtotal);
-      } else {
-        acc.push({
-          productId: item.product.id,
 
-          sku: item.product.sku,
 
-          product: item.product.name,
 
-          totalSold: item.quantity,
 
-          revenue: Number(item.subtotal),
-        });
-      }
+  const result =
 
-      return acc;
-    },
+    items.reduce(
 
-    [] as {
-      productId: string;
+      (acc, item) => {
 
-      sku: string;
 
-      product: string;
 
-      totalSold: number;
+        const existing =
 
-      revenue: number;
-    }[],
-  );
+          acc.find(
 
-  return result.sort((a, b) => b.totalSold - a.totalSold);
+            row =>
+
+              row.productId === item.product.id
+
+          );
+
+
+
+
+
+        if (existing) {
+
+
+          existing.totalOut += item.quantity;
+
+
+        } else {
+
+
+          acc.push({
+
+            productId:
+
+              item.product.id,
+
+
+            sku:
+
+              item.product.sku,
+
+
+            name:
+
+              item.product.name,
+
+
+            totalOut:
+
+              item.quantity,
+
+
+          });
+
+
+        }
+
+
+
+        return acc;
+
+
+      },
+
+
+      [] as {
+
+        productId:string;
+
+        sku:string;
+
+        name:string;
+
+        totalOut:number;
+
+      }[]
+
+
+    );
+
+
+
+
+
+  return result
+
+    .sort(
+
+      (a,b) =>
+
+        b.totalOut - a.totalOut
+
+    )
+
+    .slice(0, limit);
+
+
 }
 
 // =========================
 // LOW STOCK PRODUCTS
 // =========================
 
-export async function getLowStockProducts() {
-  return await prisma.product.findMany({
-    where: {
-      isActive: true,
+export async function getLowStockSummary(){
 
-      stock: {
-        lte: 10,
+const [
+
+critical,
+
+low
+
+]=await Promise.all([
+
+
+prisma.product.count({
+
+where:{
+
+stock:{
+ lte:5
+},
+
+isActive:true
+
+}
+
+}),
+
+
+
+prisma.product.count({
+
+where:{
+
+stock:{
+ lte:10
+},
+
+isActive:true
+
+}
+
+})
+
+
+]);
+
+
+return {
+
+critical,
+
+low
+
+};
+
+
+}
+
+// =========================
+// LOW STOCK ALERT
+// =========================
+
+export async function getLowStockProductsDashboard() {
+
+
+  const [
+
+    critical,
+
+    warning,
+
+    products,
+
+  ] = await Promise.all([
+
+
+
+    // stock <= 5
+
+    prisma.product.count({
+
+      where:{
+
+        isActive:true,
+
+
+        stock:{
+
+          lte:5,
+
+        },
+
       },
+
+    }),
+
+
+
+
+    // stock <=10
+
+    prisma.product.count({
+
+      where:{
+
+        isActive:true,
+
+
+        stock:{
+
+          gt:5,
+
+          lte:10,
+
+        },
+
+      },
+
+    }),
+
+
+
+
+
+    prisma.product.findMany({
+
+      where:{
+
+        isActive:true,
+
+
+        stock:{
+
+          lte:10,
+
+        },
+
+      },
+
+
+      select:{
+
+        id:true,
+
+        sku:true,
+
+        name:true,
+
+        category:true,
+
+        stock:true,
+
+        price:true,
+
+      },
+
+
+      orderBy:{
+
+        stock:"asc",
+
+      },
+
+
+    }),
+
+
+
+  ]);
+
+
+
+
+
+  return {
+
+
+    summary:{
+
+
+      critical,
+
+
+      warning,
+
+
     },
 
-    select: {
-      id: true,
 
-      sku: true,
 
-      name: true,
+    items:products,
 
-      category: true,
 
-      stock: true,
+  };
 
-      price: true,
-    },
 
-    orderBy: {
-      stock: "asc",
-    },
-  });
 }
 
 // =========================
@@ -305,49 +549,215 @@ export async function getLoyaltyAnalytics() {
 }
 
 // =========================
-// INVENTORY ANALYTICS
+// INVENTORY ANALYTICS V2
 // =========================
 
-export async function getInventoryAnalytics() {
-  const [totalStockIn, totalStockOut, totalAdjustment] = await Promise.all([
+export async function getInventoryAnalytics(
+  startDate?: Date,
+  endDate?: Date,
+) {
+
+
+  const dateFilter = {
+
+    ...(startDate || endDate
+
+      ? {
+
+          createdAt: {
+
+            ...(startDate
+              ? {
+                  gte: startDate,
+                }
+              : {}),
+
+
+            ...(endDate
+              ? {
+                  lte: endDate,
+                }
+              : {}),
+
+          },
+
+        }
+
+      : {}),
+
+  };
+
+
+
+  const [
+
+    stockIn,
+
+    stockOut,
+
+    adjustment,
+
+    totalTransaction,
+
+    totalQuantityMovement,
+
+  ] = await Promise.all([
+
+
+
+    // =========================
+    // TOTAL STOCK IN
+    // =========================
+
     prisma.inventoryTransaction.aggregate({
+
       _sum: {
+
         quantity: true,
+
       },
 
+
       where: {
+
+        ...dateFilter,
+
+
         type: "STOCK_IN",
+
       },
+
     }),
 
+
+
+    // =========================
+    // TOTAL STOCK OUT
+    // =========================
+
     prisma.inventoryTransaction.aggregate({
+
       _sum: {
+
         quantity: true,
+
       },
 
+
       where: {
+
+        ...dateFilter,
+
+
         type: "STOCK_OUT",
+
       },
+
     }),
+
+
+
+
+    // =========================
+    // TOTAL ADJUSTMENT
+    // =========================
 
     prisma.inventoryTransaction.aggregate({
+
       _sum: {
+
         quantity: true,
+
       },
 
+
       where: {
+
+        ...dateFilter,
+
+
         type: "ADJUSTMENT",
+
       },
+
     }),
+
+
+
+
+    // =========================
+    // TOTAL LOG ACTIVITY
+    // =========================
+
+    prisma.inventoryTransaction.count({
+
+      where: dateFilter,
+
+    }),
+
+
+
+
+    // =========================
+    // TOTAL QUANTITY MOVEMENT
+    // =========================
+
+    prisma.inventoryTransaction.aggregate({
+
+      _sum: {
+
+        quantity: true,
+
+      },
+
+
+      where: dateFilter,
+
+    }),
+
+
   ]);
 
+
+
+
   return {
-    totalStockIn: totalStockIn._sum.quantity ?? 0,
 
-    totalStockOut: totalStockOut._sum.quantity ?? 0,
 
-    totalAdjustment: totalAdjustment._sum.quantity ?? 0,
+    totalStockIn:
+
+      stockIn._sum.quantity ?? 0,
+
+
+
+    totalStockOut:
+
+      stockOut._sum.quantity ?? 0,
+
+
+
+    totalAdjustment:
+
+      adjustment._sum.quantity ?? 0,
+
+
+
+    // jumlah record inventory transaction
+
+    totalTransaction,
+
+
+
+    // jumlah seluruh barang bergerak
+
+    totalQuantityMovement:
+
+      totalQuantityMovement._sum.quantity ?? 0,
+
+
   };
+
+
 }
 
 // =========================
@@ -485,6 +895,186 @@ export async function getInventoryHistory(
       totalPages: Math.ceil(total / limit),
     },
   };
+}
+
+// =========================
+// INVENTORY MOVEMENT CHART
+// =========================
+
+export async function getInventoryMovementChart(
+  startDate?: Date,
+  endDate?: Date,
+) {
+
+
+  const dateFilter = {
+
+    ...(startDate || endDate
+
+      ? {
+
+          createdAt: {
+
+            ...(startDate
+              ? {
+                  gte: startDate,
+                }
+              : {}),
+
+
+            ...(endDate
+              ? {
+                  lte: endDate,
+                }
+              : {}),
+
+          },
+
+        }
+
+      : {}),
+
+  };
+
+
+
+  const transactions =
+    await prisma.inventoryTransaction.findMany({
+
+      where: dateFilter,
+
+
+      select: {
+
+        type: true,
+
+        quantity: true,
+
+        createdAt: true,
+
+      },
+
+
+      orderBy: {
+
+        createdAt: "asc",
+
+      },
+
+
+    });
+
+
+
+
+  const result =
+    transactions.reduce(
+
+      (acc, item) => {
+
+
+        const date =
+          item.createdAt
+            .toISOString()
+            .slice(0, 10);
+
+
+
+        let existing =
+          acc.find(
+
+            row =>
+              row.date === date
+
+          );
+
+
+
+        if (!existing) {
+
+
+          existing = {
+
+            date,
+
+
+            stockIn: 0,
+
+
+            stockOut: 0,
+
+
+            adjustment: 0,
+
+          };
+
+
+          acc.push(existing);
+
+
+        }
+
+
+
+
+        switch(item.type){
+
+
+          case "STOCK_IN":
+
+            existing.stockIn += item.quantity;
+
+            break;
+
+
+
+          case "STOCK_OUT":
+
+            existing.stockOut += item.quantity;
+
+            break;
+
+
+
+          case "ADJUSTMENT":
+
+            existing.adjustment += item.quantity;
+
+            break;
+
+
+        }
+
+
+
+
+        return acc;
+
+
+      },
+
+
+      [] as {
+
+        date:string;
+
+        stockIn:number;
+
+        stockOut:number;
+
+        adjustment:number;
+
+      }[]
+
+
+    );
+
+
+
+
+  return result;
+
+
 }
 
 // =========================
@@ -1015,5 +1605,79 @@ export async function getCustomerAnalytics(
 
  };
 
+
+}
+
+// =========================
+// STOCK VALUE SUMMARY
+// =========================
+
+// =========================
+// STOCK VALUE SUMMARY
+// =========================
+
+export async function getStockValueSummary() {
+
+
+  const products = await prisma.product.findMany({
+
+    where: {
+
+      isActive: true,
+
+    },
+
+
+    select: {
+
+      stock: true,
+
+      price: true,
+
+    },
+
+  });
+
+
+
+  let totalStock = 0;
+
+  let inventoryValue = 0;
+
+
+
+  for (const product of products) {
+
+
+    const stock = product.stock;
+
+
+    const price = Number(product.price);
+
+
+
+    totalStock += stock;
+
+
+    inventoryValue += stock * price;
+
+
+  }
+
+
+
+
+  return {
+
+    totalProduct: products.length,
+
+
+    totalStock,
+
+
+    inventoryValue,
+
+
+  };
 
 }

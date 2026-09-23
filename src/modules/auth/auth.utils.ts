@@ -2,20 +2,39 @@ import bcrypt from "bcrypt";
 
 
 
+
+// =========================
+// BCRYPT CONFIG
+// =========================
+
+const SALT_ROUNDS =
+  Number(
+    process.env.BCRYPT_ROUNDS
+    ||
+    10
+  );
+
+
+
+
+
+
 // =========================
 // HASH PASSWORD
 // =========================
 
 export async function hashPassword(
-  password: string
-) {
+
+  password:string,
+
+):Promise<string> {
 
 
   return await bcrypt.hash(
 
     password,
 
-    10
+    SALT_ROUNDS,
 
   );
 
@@ -24,21 +43,27 @@ export async function hashPassword(
 
 
 
+
+
+
 // =========================
 // COMPARE PASSWORD
 // =========================
 
 export async function comparePassword(
-  password: string,
-  passwordHash: string
-) {
+
+  password:string,
+
+  passwordHash:string,
+
+):Promise<boolean> {
 
 
   return await bcrypt.compare(
 
     password,
 
-    passwordHash
+    passwordHash,
 
   );
 

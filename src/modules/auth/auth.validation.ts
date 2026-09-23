@@ -2,11 +2,54 @@ import { z } from "zod";
 
 
 
+
 // =========================
-// LOGIN VALIDATION
+// USER LOGIN VALIDATION
 // =========================
 
-export const loginSchema = z.object({
+export const userLoginSchema = z.object({
+
+
+  email: z
+
+    .string()
+
+    .trim()
+
+    .email(
+
+      "Email tidak valid",
+
+    ),
+
+
+
+  password: z
+
+    .string()
+
+    .min(
+
+      6,
+
+      "Password minimal 6 karakter",
+
+    ),
+
+
+});
+
+
+
+
+
+
+
+// =========================
+// CUSTOMER LOGIN VALIDATION
+// =========================
+
+export const customerLoginSchema = z.object({
 
   email: z
     .string()
@@ -15,11 +58,12 @@ export const loginSchema = z.object({
 
   password: z
     .string()
-    .min(6, "Password minimal 6 karakter"),
+    .min(
+      6,
+      "Password minimal 6 karakter",
+    ),
 
 });
-
-
 
 
 // =========================
@@ -28,11 +72,20 @@ export const loginSchema = z.object({
 
 export const refreshTokenSchema = z.object({
 
+
   refreshToken: z
+
     .string()
+
+    .trim()
+
     .min(
+
       10,
-      "Refresh token tidak valid"
+
+      "Refresh token tidak valid",
+
     ),
+
 
 });
