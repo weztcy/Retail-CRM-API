@@ -23,7 +23,7 @@ import {
 
 import {
   customerIdSchema,
-  updateCustomerSchema,
+  updateCustomerAdminSchema,
 } from "@/modules/customer/customer.validation";
 
 
@@ -301,14 +301,10 @@ export async function PUT(
     // =========================
 
     const data =
-
-      validate(
-
-        updateCustomerSchema,
-
-        body
-
-      );
+  validate(
+    updateCustomerAdminSchema,
+    body
+  );
 
 
 

@@ -1,18 +1,7 @@
 // =========================
-// AUTH TYPES
+// JWT PAYLOAD TYPES
 // =========================
 
-
-export type AuthType =
-  | "USER"
-  | "CUSTOMER";
-
-
-
-
-// =========================
-// USER JWT PAYLOAD
-// =========================
 
 export interface UserJwtPayload {
 
@@ -28,27 +17,19 @@ export interface UserJwtPayload {
 
 
 
-
-// =========================
-// CUSTOMER JWT PAYLOAD
-// =========================
-
 export interface CustomerJwtPayload {
 
   id:string;
 
   type:"CUSTOMER";
 
+  email:string;
+
   phone:string;
 
 }
 
 
-
-
-// =========================
-// AUTH JWT PAYLOAD
-// =========================
 
 export type JwtPayload =
   | UserJwtPayload
@@ -57,14 +38,43 @@ export type JwtPayload =
 
 
 
+
 // =========================
-// CURRENT USER TYPE
+// REGISTER CUSTOMER INPUT
 // =========================
 
-export interface AuthUser {
 
-  id:string;
+export interface RegisterCustomerInput {
 
-  type:AuthType;
+
+  name:string;
+
+
+  email:string;
+
+
+  phone:string;
+
+
+  password:string;
+
+
+  imageUrl?:string;
+
+
+  gender?:
+    | "MALE"
+    | "FEMALE"
+    | "OTHER";
+
+
+  birthDate?:string;
+
+
+  address?:string;
+
+
+  city?:string;
+
 
 }

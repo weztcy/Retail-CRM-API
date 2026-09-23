@@ -1,14 +1,19 @@
-import { successResponse } from "@/utils/response";
+import {
+  successResponse,
+} from "@/utils/response";
 
 
-export async function GET() {
+export async function GET(){
 
   return successResponse(
+
     {
-      service: "CRM Backend API",
-      version: "1.0.0",
+      status:"OK",
+      service:"Retail CRM API",
     },
+
     "API is running"
+
   );
 
 }

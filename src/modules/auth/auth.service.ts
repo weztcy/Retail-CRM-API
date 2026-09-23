@@ -15,6 +15,7 @@ import type {
 
 import {
   comparePassword,
+  hashPassword,
 } from "./auth.utils";
 
 
@@ -22,7 +23,9 @@ import {
   ApiError,
 } from "@/utils/errors/api-error";
 
-
+import type {
+  RegisterCustomerInput,
+} from "./auth.types";
 
 
 // =========================
@@ -814,6 +817,256 @@ export async function refreshSession(
 
 
   };
+
+
+}
+
+// =========================
+// REGISTER CUSTOMER
+// =========================
+
+export async function registerCustomer(
+
+  data:RegisterCustomerInput,
+
+) {
+
+
+  const existingCustomer =
+    await prisma.customer.findFirst({
+
+      where:{
+
+        OR:[
+
+          {
+            email:data.email,
+          },
+
+
+          {
+            phone:data.phone,
+          },
+
+
+        ],
+
+      },
+
+    });
+
+
+
+  if(existingCustomer){
+
+
+    throw new ApiError(
+
+      "Email atau nomor HP sudah digunakan",
+
+      409,
+
+    );
+
+
+  }
+
+
+
+
+
+  const passwordHash =
+    await hashPassword(
+
+      data.password,
+
+    );
+
+
+
+
+
+  const customer =
+    await prisma.customer.create({
+
+      data:{
+
+
+        customerCode:
+
+          `CUS-${Date.now()}`,
+
+
+
+        name:
+
+          data.name,
+
+
+
+        email:
+
+          data.email,
+
+
+
+        phone:
+
+          data.phone,
+
+
+
+        passwordHash,
+
+
+
+        imageUrl:
+
+          data.imageUrl,
+
+
+
+        gender:
+
+          data.gender,
+
+
+
+        birthDate:
+
+          data.birthDate
+
+          ?
+
+          new Date(data.birthDate)
+
+          :
+
+          undefined,
+
+
+
+        address:
+
+          data.address,
+
+
+
+        city:
+
+          data.city,
+
+
+
+        membership:
+
+          "BRONZE",
+
+
+
+
+        loyalty:{
+
+          create:{
+
+            points:0,
+
+          },
+
+        },
+
+
+      },
+
+
+
+      select:{
+
+
+        id:true,
+
+
+        customerCode:true,
+
+
+        name:true,
+
+
+        email:true,
+
+
+        phone:true,
+
+
+        imageUrl:true,
+
+
+        membership:true,
+
+
+        createdAt:true,
+
+
+      },
+
+
+    });
+
+
+
+
+
+  return customer;
+
+
+}
+
+// =========================
+// LOGOUT
+// =========================
+
+export async function logout(
+  refreshToken:string,
+) {
+
+
+  const token =
+    await prisma.refreshToken.findUnique({
+
+      where:{
+        token:refreshToken,
+      },
+
+    });
+
+
+
+  if(!token){
+
+    throw new ApiError(
+
+      "Refresh token tidak ditemukan",
+
+      404,
+
+    );
+
+  }
+
+
+
+
+  await prisma.refreshToken.delete({
+
+    where:{
+      token:refreshToken,
+    },
+
+  });
+
+
+
+  return true;
 
 
 }

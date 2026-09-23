@@ -1,4 +1,6 @@
-import { NextRequest } from "next/server";
+import {
+  NextRequest,
+} from "next/server";
 
 
 import {
@@ -24,12 +26,15 @@ import path from "path";
 import crypto from "crypto";
 
 
+
 // =========================
-// UPLOAD USER IMAGE
+// UPLOAD CUSTOMER IMAGE
 // =========================
 
 export async function POST(
-  request: NextRequest
+
+  request: NextRequest,
+
 ) {
 
 
@@ -46,39 +51,60 @@ export async function POST(
 
 
 
+
+
     // =========================
     // CHECK FILE
     // =========================
 
-    if (
+    if(
+
       !file ||
+
       !(file instanceof File)
-    ) {
+
+    ){
 
       throw new ApiError(
+
         "File tidak ditemukan",
-        400
+
+        400,
+
       );
 
     }
 
 
 
+
+
     // =========================
-    // VALIDATE MIME TYPE
+    // VALIDATE FILE TYPE
     // =========================
 
-    const allowedTypes: Record<string, string> = {
+    const allowedTypes:
+      Record<string,string> = {
 
-      "image/jpeg": "jpeg",
 
-      "image/jpg": "jpg",
+        "image/jpeg":
+          "jpg",
 
-      "image/png": "png",
 
-      "image/webp": "webp",
+        "image/jpg":
+          "jpg",
 
-    };
+
+        "image/png":
+          "png",
+
+
+        "image/webp":
+          "webp",
+
+
+      };
+
 
 
 
@@ -87,20 +113,27 @@ export async function POST(
 
 
 
-    if (!extension) {
+
+    if(!extension){
+
 
       throw new ApiError(
+
         "Format file harus JPG, JPEG, PNG, atau WEBP",
-        400
+
+        400,
+
       );
+
 
     }
 
 
 
 
+
     // =========================
-    // VALIDATE SIZE
+    // VALIDATE FILE SIZE
     // MAX 2MB
     // =========================
 
@@ -109,14 +142,18 @@ export async function POST(
 
 
 
-    if (
-      file.size > maxSize
-    ) {
+
+    if(file.size > maxSize){
+
 
       throw new ApiError(
+
         "Ukuran file maksimal 2MB",
-        400
+
+        400,
+
       );
+
 
     }
 
@@ -125,19 +162,20 @@ export async function POST(
 
 
     // =========================
-    // CREATE UNIQUE FILE NAME
+    // CREATE FILE NAME
     // =========================
 
     const filename =
 
-      `user-${crypto.randomUUID()}.${extension}`;
+      `customer-${crypto.randomUUID()}.${extension}`;
+
 
 
 
 
 
     // =========================
-    // UPLOAD DIRECTORY
+    // CREATE UPLOAD DIRECTORY
     // =========================
 
     const uploadPath =
@@ -150,7 +188,7 @@ export async function POST(
 
         "uploads",
 
-        "users"
+        "customers",
 
       );
 
@@ -164,7 +202,7 @@ export async function POST(
 
       {
         recursive:true,
-      }
+      },
 
     );
 
@@ -172,13 +210,15 @@ export async function POST(
 
 
 
+
     // =========================
-    // WRITE FILE
+    // SAVE FILE
     // =========================
 
     const bytes =
 
       await file.arrayBuffer();
+
 
 
 
@@ -196,11 +236,11 @@ export async function POST(
 
         uploadPath,
 
-        filename
+        filename,
 
       ),
 
-      buffer
+      buffer,
 
     );
 
@@ -208,13 +248,15 @@ export async function POST(
 
 
 
+
     // =========================
-    // RETURN URL
+    // IMAGE URL
     // =========================
 
     const url =
 
-      `/uploads/users/${filename}`;
+      `/uploads/customers/${filename}`;
+
 
 
 
@@ -226,17 +268,22 @@ export async function POST(
         url,
       },
 
-      "Upload user image berhasil"
+      "Upload customer image berhasil",
 
     );
 
 
 
 
-  } catch(error) {
+
+  } catch(error){
 
 
-    return handleError(error);
+    return handleError(
+
+      error,
+
+    );
 
 
   }

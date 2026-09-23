@@ -8,8 +8,10 @@ import {
 } from "./auth.middleware";
 
 
+
 import type {
-  JwtPayload,
+  UserJwtPayload,
+  CustomerJwtPayload,
 } from "./auth.types";
 
 
@@ -33,10 +35,6 @@ export async function getCurrentUser(
 
 
 
-  const user =
-    auth as JwtPayload;
-
-
 
 
   // =========================
@@ -44,8 +42,13 @@ export async function getCurrentUser(
   // =========================
 
   if(
-    user.type === "USER"
+    auth.type === "USER"
   ) {
+
+
+    const user =
+      auth as UserJwtPayload;
+
 
 
     return {
@@ -71,16 +74,24 @@ export async function getCurrentUser(
   // CUSTOMER AUTH
   // =========================
 
+  const customer =
+    auth as CustomerJwtPayload;
+
+
+
   return {
 
 
-    id:user.id,
+    id:customer.id,
 
 
-    type:user.type,
+    type:customer.type,
 
 
-    phone:user.phone,
+    email:customer.email,
+
+
+    phone:customer.phone,
 
 
   };

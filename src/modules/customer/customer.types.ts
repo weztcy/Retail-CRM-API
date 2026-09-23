@@ -4,36 +4,39 @@
 
 export interface CreateCustomerInput {
 
-  customerCode: string;
 
-  name: string;
+  customerCode:string;
 
-  phone: string;
 
-  email?: string;
+  name:string;
 
-  password?: string;
 
-  imageUrl?: string;
+  phone:string;
+
+
+  email?:string;
+
+
+  password?:string;
+
+
+  imageUrl?:string;
+
 
   gender?:
     | "MALE"
     | "FEMALE"
     | "OTHER";
 
-  birthDate?: string;
 
-  address?: string;
+  birthDate?:string;
 
-  city?: string;
 
-  membership?:
-    | "BRONZE"
-    | "SILVER"
-    | "GOLD"
-    | "PLATINUM";
+  address?:string;
 
-  isActive?: boolean;
+
+  city?:string;
+
 
 }
 
@@ -42,31 +45,82 @@ export interface CreateCustomerInput {
 
 
 // =========================
-// UPDATE CUSTOMER INPUT
+// UPDATE CUSTOMER PROFILE
+// CUSTOMER SELF SERVICE
 // =========================
 
-export interface UpdateCustomerInput {
+export interface UpdateCustomerProfileInput {
 
-  name?: string;
 
-  phone?: string;
+  name?:string;
 
-  email?: string;
 
-  password?: string;
+  phone?:string;
 
-  imageUrl?: string;
+
+  email?:string;
+
+
+  password?:string;
+
+
+  imageUrl?:string;
+
 
   gender?:
     | "MALE"
     | "FEMALE"
     | "OTHER";
 
-  birthDate?: string;
 
-  address?: string;
+  birthDate?:string;
 
-  city?: string;
+
+  address?:string;
+
+
+  city?:string;
+
+
+}
+
+
+
+
+
+// =========================
+// UPDATE CUSTOMER BY ADMIN
+// =========================
+
+export interface UpdateCustomerAdminInput {
+
+
+  name?:string;
+
+
+  phone?:string;
+
+
+  email?:string;
+
+
+  imageUrl?:string;
+
+
+  gender?:
+    | "MALE"
+    | "FEMALE"
+    | "OTHER";
+
+
+  birthDate?:string;
+
+
+  address?:string;
+
+
+  city?:string;
+
 
   membership?:
     | "BRONZE"
@@ -74,6 +128,52 @@ export interface UpdateCustomerInput {
     | "GOLD"
     | "PLATINUM";
 
-  isActive?: boolean;
+
+  isActive?:boolean;
+
+
+}
+
+
+
+
+
+// =========================
+// CUSTOMER FILTER
+// =========================
+
+export interface CustomerFilterInput {
+
+
+  search?:string;
+
+
+  membership?:
+    | "BRONZE"
+    | "SILVER"
+    | "GOLD"
+    | "PLATINUM";
+
+
+  gender?:
+    | "MALE"
+    | "FEMALE"
+    | "OTHER";
+
+
+  city?:string;
+
+
+  page?:number;
+
+
+  limit?:number;
+
+
+  sort?:string;
+
+
+  includeInactive?:boolean;
+
 
 }

@@ -36,7 +36,7 @@ export async function authenticate(
 
 
 
-  if(!authHeader) {
+  if(!authHeader){
 
 
     throw new ApiError(
@@ -58,7 +58,7 @@ export async function authenticate(
     !authHeader.startsWith(
       "Bearer ",
     )
-  ) {
+  ){
 
 
     throw new ApiError(
@@ -75,14 +75,13 @@ export async function authenticate(
 
 
 
-
   const token =
     authHeader.substring(7);
 
 
 
 
-  if(!token) {
+  if(!token){
 
 
     throw new ApiError(
@@ -113,7 +112,7 @@ export async function authenticate(
     if(
       !payload.id ||
       !payload.type
-    ) {
+    ){
 
 
       throw new ApiError(
@@ -129,14 +128,17 @@ export async function authenticate(
 
 
 
+
+
     return payload as JwtPayload;
 
 
 
-  } catch(error) {
+  }catch(error){
 
 
-    if(error instanceof ApiError) {
+
+    if(error instanceof ApiError){
 
       throw error;
 
