@@ -1,41 +1,25 @@
 import { prisma } from "@/lib/prisma";
 
-
 import type {
   CreateActivityInput,
   UpdateActivityInput,
 } from "./activity.types";
 
-
-
-
 // =========================
 // GET CUSTOMER ACTIVITIES
 // =========================
 
-export async function getCustomerActivities(
-  customerId: string
-) {
-
-
+export async function getCustomerActivities(customerId: string) {
   return await prisma.customerActivity.findMany({
-
     where: {
-
       customerId,
-
     },
-
 
     orderBy: {
-
       createdAt: "desc",
-
     },
 
-
     select: {
-
       id: true,
 
       type: true,
@@ -50,51 +34,30 @@ export async function getCustomerActivities(
 
       updatedAt: true,
 
-
       user: {
-
         select: {
-
           id: true,
 
           name: true,
 
           email: true,
-
         },
-
       },
-
     },
-
   });
-
 }
-
-
-
-
 
 // =========================
 // GET ACTIVITY BY ID
 // =========================
 
-export async function getActivityById(
-  id: string
-) {
-
-
+export async function getActivityById(id: string) {
   return await prisma.customerActivity.findUnique({
-
     where: {
-
       id,
-
     },
 
-
     select: {
-
       id: true,
 
       type: true,
@@ -109,11 +72,8 @@ export async function getActivityById(
 
       updatedAt: true,
 
-
       customer: {
-
         select: {
-
           id: true,
 
           customerCode: true,
@@ -121,49 +81,29 @@ export async function getActivityById(
           name: true,
 
           phone: true,
-
         },
-
       },
 
-
       user: {
-
         select: {
-
           id: true,
 
           name: true,
 
           email: true,
-
         },
-
       },
-
     },
-
   });
-
 }
-
-
-
-
 
 // =========================
 // CREATE ACTIVITY
 // =========================
 
-export async function createActivity(
-  data: CreateActivityInput
-) {
-
-
+export async function createActivity(data: CreateActivityInput) {
   return await prisma.customerActivity.create({
-
     data: {
-
       customerId: data.customerId,
 
       userId: data.userId,
@@ -173,12 +113,9 @@ export async function createActivity(
       subject: data.subject,
 
       description: data.description,
-
     },
 
-
     select: {
-
       id: true,
 
       type: true,
@@ -192,16 +129,9 @@ export async function createActivity(
       createdAt: true,
 
       updatedAt: true,
-
     },
-
   });
-
 }
-
-
-
-
 
 // =========================
 // UPDATE ACTIVITY STATUS
@@ -209,28 +139,18 @@ export async function createActivity(
 
 export async function updateActivityStatus(
   id: string,
-  data: UpdateActivityInput
+  data: UpdateActivityInput,
 ) {
-
-
   return await prisma.customerActivity.update({
-
     where: {
-
       id,
-
     },
-
 
     data: {
-
       status: data.status,
-
     },
 
-
     select: {
-
       id: true,
 
       type: true,
@@ -244,9 +164,6 @@ export async function updateActivityStatus(
       createdAt: true,
 
       updatedAt: true,
-
     },
-
   });
-
 }
