@@ -1,95 +1,58 @@
 import { prisma } from "@/lib/prisma";
 
-
-import type {
-  UserDashboardInventory,
-} from "./inventory.types";
-
-
-
+import type { UserDashboardInventory } from "./inventory.types";
 
 // =========================
 // GET USER INVENTORY DASHBOARD
 // =========================
 
-export async function getUserDashboardInventory()
-
-:Promise<UserDashboardInventory>{
-
-
-
-
-
+export async function getUserDashboardInventory(): Promise<UserDashboardInventory> {
   const [
-
-
     products,
-
 
     lowStock,
 
-
     totalMovement,
-
 
     movementData,
 
-
     recentActivity,
 
-
     stockOutData,
-
-
   ] = await Promise.all([
-
-
-
-
-
     // =========================
     // PRODUCT STOCK
     // =========================
 
     prisma.product.findMany({
-
-      select:{
-
-        stock:true,
-
-        price:true,
-
+      where: {
+        isActive: true,
       },
 
+      select: {
+        id: true,
+
+        category: true,
+
+        stock: true,
+
+        price: true,
+      },
     }),
-
-
-
-
-
 
     // =========================
     // LOW STOCK
     // =========================
 
     prisma.product.count({
+      where: {
+        isActive: true,
 
-      where:{
-
-        stock:{
-
-          lte:10,
-
+        stock: {
+          lte: 10,
         },
-
       },
-
     }),
-
-
-
-
-
 
     // =========================
     // TOTAL INVENTORY MOVEMENT
@@ -97,89 +60,49 @@ export async function getUserDashboardInventory()
 
     prisma.inventoryTransaction.count(),
 
-
-
-
-
-
     // =========================
     // MOVEMENT SUMMARY
     // =========================
 
     prisma.inventoryTransaction.findMany({
+      select: {
+        type: true,
 
-      select:{
-
-        type:true,
-
-        quantity:true,
-
+        quantity: true,
       },
-
     }),
-
-
-
-
-
 
     // =========================
     // RECENT ACTIVITY
     // =========================
 
     prisma.inventoryTransaction.findMany({
+      take: 10,
 
-      take:10,
-
-
-      orderBy:{
-
-        createdAt:"desc",
-
+      orderBy: {
+        createdAt: "desc",
       },
 
+      select: {
+        productId: true,
 
-      select:{
+        type: true,
 
+        quantity: true,
 
-        productId:true,
+        stockBefore: true,
 
+        stockAfter: true,
 
-        type:true,
+        createdAt: true,
 
-
-        quantity:true,
-
-
-        stockBefore:true,
-
-
-        stockAfter:true,
-
-
-        createdAt:true,
-
-
-        product:{
-
-          select:{
-
-            name:true,
-
+        product: {
+          select: {
+            name: true,
           },
-
         },
-
-
       },
-
-
     }),
-
-
-
-
-
 
     // =========================
     // FAST MOVING PRODUCT
@@ -187,351 +110,192 @@ export async function getUserDashboardInventory()
     // =========================
 
     prisma.inventoryTransaction.findMany({
-
-      where:{
-
-        type:"STOCK_OUT",
-
+      where: {
+        type: "STOCK_OUT",
       },
 
+      select: {
+        quantity: true,
 
-      select:{
+        product: {
+          select: {
+            id: true,
 
-
-        quantity:true,
-
-
-        product:{
-
-          select:{
-
-            id:true,
-
-            name:true,
-
+            name: true,
           },
-
         },
-
-
       },
-
-
     }),
-
-
-
-
-
   ]);
-
-
-
-
-
-
-
-
 
   // =========================
   // STOCK VALUE
   // =========================
 
+  const totalStock = products.reduce(
+    (total, item) => total + item.stock,
 
-  const totalStock =
+    0,
+  );
 
-    products.reduce(
+  const totalStockValue = products.reduce(
+    (total, item) => total + item.stock * Number(item.price),
 
-      (total,item)=>
+    0,
+  );
 
-        total + item.stock,
+  // =========================
+  // STOCK VALUE BY CATEGORY
+  // =========================
 
-      0
+  const categoryMap = new Map<
+    string,
+    {
+      totalStock: number;
 
+      stockValue: number;
+    }
+  >();
+
+  products.forEach((item) => {
+    const current = categoryMap.get(item.category) ?? {
+      totalStock: 0,
+
+      stockValue: 0,
+    };
+
+    current.totalStock += item.stock;
+
+    current.stockValue += item.stock * Number(item.price);
+
+    categoryMap.set(
+      item.category,
+
+      current,
     );
+  });
 
+  const stockValueByCategory = Array.from(categoryMap.entries())
 
+    .map(([category, value]) => ({
+      category,
 
+      ...value,
+    }))
 
-  const totalStockValue =
-
-    products.reduce(
-
-      (total,item)=>
-
-        total +
-
-        (
-
-          item.stock *
-
-          Number(item.price)
-
-        ),
-
-      0
-
-    );
-
-
-
-
-
-
-
-
+    .sort((a, b) => b.stockValue - a.stockValue);
 
   // =========================
   // MOVEMENT PROCESS
   // =========================
 
+  const movementMap = new Map<
+    string,
+    {
+      quantity: number;
 
-  const movementMap =
+      totalTransaction: number;
+    }
+  >();
 
-    new Map<string,{
+  movementData.forEach((item) => {
+    const current = movementMap.get(item.type) ?? {
+      quantity: 0,
 
-      quantity:number;
-
-      totalTransaction:number;
-
-    }>();
-
-
-
-
-  movementData.forEach((item)=>{
-
-
-    const current =
-
-      movementMap.get(item.type)
-
-      ??
-
-      {
-
-        quantity:0,
-
-        totalTransaction:0,
-
-      };
-
-
-
+      totalTransaction: 0,
+    };
 
     current.quantity += item.quantity;
 
-
-    current.totalTransaction +=1;
-
-
-
+    current.totalTransaction += 1;
 
     movementMap.set(
-
       item.type,
 
-      current
-
+      current,
     );
-
-
   });
-
-
-
-
-
-
-
-
 
   // =========================
   // FAST MOVING PRODUCT
   // =========================
 
+  const fastMap = new Map<
+    string,
+    {
+      productId: string;
 
-  const fastMap =
+      productName: string;
 
-    new Map<string,{
+      totalOut: number;
+    }
+  >();
 
-      productId:string;
+  stockOutData.forEach((item) => {
+    const id = item.product.id;
 
-      productName:string;
+    const current = fastMap.get(id) ?? {
+      productId: id,
 
-      totalOut:number;
+      productName: item.product.name,
 
-    }>();
+      totalOut: 0,
+    };
 
-
-
-
-  stockOutData.forEach((item)=>{
-
-
-    const id =
-
-      item.product.id;
-
-
-
-
-    const current =
-
-      fastMap.get(id)
-
-      ??
-
-      {
-
-        productId:id,
-
-        productName:item.product.name,
-
-        totalOut:0,
-
-      };
-
-
-
-
-    current.totalOut +=
-
-      item.quantity;
-
-
-
+    current.totalOut += item.quantity;
 
     fastMap.set(
-
       id,
 
-      current
-
+      current,
     );
-
-
-
   });
 
-
-
-
-
-
-
-
-
   return {
-
-
-
-    overview:{
-
-
+    overview: {
       totalStock,
-
 
       totalStockValue,
 
-
       lowStock,
 
-
       totalMovement,
-
-
-
     },
 
+    movement: Array.from(movementMap.entries())
 
-
-
-
-
-    movement:
-
-      Array.from(
-
-        movementMap.entries()
-
-      )
-
-      .map(([type,value])=>({
-
-
+      .map(([type, value]) => ({
         type,
 
         ...value,
-
-
       })),
 
+    recentActivity: recentActivity.map((item) => ({
+      productId: item.productId,
 
+      productName: item.product.name,
 
+      type: item.type,
 
+      quantity: item.quantity,
 
+      stockBefore: item.stockBefore,
 
-    recentActivity:
+      stockAfter: item.stockAfter,
 
-      recentActivity.map((item)=>({
+      createdAt: item.createdAt,
+    })),
 
+    fastMovingProducts: Array.from(fastMap.values())
 
-        productId:item.productId,
+      .sort((a, b) => b.totalOut - a.totalOut)
 
+      .slice(0, 10),
 
-        productName:item.product.name,
+    // =========================
+    // NEW
+    // =========================
 
-
-        type:item.type,
-
-
-        quantity:item.quantity,
-
-
-        stockBefore:item.stockBefore,
-
-
-        stockAfter:item.stockAfter,
-
-
-        createdAt:item.createdAt,
-
-
-      })),
-
-
-
-
-
-
-
-    fastMovingProducts:
-
-
-      Array.from(
-
-        fastMap.values()
-
-      )
-
-      .sort(
-
-        (a,b)=>
-
-          b.totalOut -
-
-          a.totalOut
-
-      )
-
-      .slice(0,10),
-
-
-
-
+    stockValueByCategory,
   };
-
-
-
 }

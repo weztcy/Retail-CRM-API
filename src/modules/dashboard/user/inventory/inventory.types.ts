@@ -6,6 +6,10 @@
 export interface UserDashboardInventory {
 
 
+  // =========================
+  // INVENTORY OVERVIEW
+  // =========================
+
   overview: {
 
     totalStock: number;
@@ -20,6 +24,10 @@ export interface UserDashboardInventory {
 
 
 
+  // =========================
+  // STOCK MOVEMENT
+  // =========================
+
   movement: {
 
     type: string;
@@ -31,6 +39,10 @@ export interface UserDashboardInventory {
   }[];
 
 
+
+  // =========================
+  // RECENT INVENTORY ACTIVITY
+  // =========================
 
   recentActivity: {
 
@@ -52,6 +64,11 @@ export interface UserDashboardInventory {
 
 
 
+
+  // =========================
+  // FAST MOVING PRODUCT
+  // =========================
+
   fastMovingProducts: {
 
     productId: string;
@@ -61,6 +78,27 @@ export interface UserDashboardInventory {
     totalOut: number;
 
   }[];
+
+
+
+
+
+  // =========================
+  // STOCK VALUE BY CATEGORY
+  // NEW IMPROVEMENT
+  // =========================
+
+  stockValueByCategory: {
+
+    category: string;
+
+    totalStock: number;
+
+    stockValue: number;
+
+  }[];
+
+
 
 
 }
