@@ -219,17 +219,11 @@ src/
             route.ts
           team-performance/
             route.ts
-      health/
-        route.ts
       products/
         [id]/
           route.ts
         route.ts
       protected/
-        route.ts
-      test-db/
-        route.ts
-      test-password/
         route.ts
       transactions/
         [id]/
@@ -379,3589 +373,6 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="src/app/api/dashboard/customer/activity/route.ts">
-
-</file>
-
-<file path="src/app/api/dashboard/customer/loyalty/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireCustomer,
-} from "@/modules/auth/permission";
-
-
-import {
-  getCustomerLoyaltyDashboard,
-} from "@/modules/dashboard/customer/loyalty/loyalty.service";
-
-
-
-
-// =========================
-// GET CUSTOMER LOYALTY DASHBOARD
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    const customer =
-
-      await requireCustomer(
-
-        request
-
-      );
-
-
-
-
-
-    const loyalty =
-
-      await getCustomerLoyaltyDashboard(
-
-        customer.id
-
-      );
-
-
-
-
-
-
-    return successResponse(
-
-      loyalty,
-
-      "Dashboard loyalty customer berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/app/api/dashboard/customer/membership/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireCustomer,
-} from "@/modules/auth/permission";
-
-
-import {
-  getCustomerMembershipStatus,
-} from "@/modules/dashboard/customer/membership/membership.service";
-
-
-
-
-// =========================
-// GET CUSTOMER MEMBERSHIP STATUS
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    const customer =
-
-      await requireCustomer(
-
-        request
-
-      );
-
-
-
-
-
-    const membership =
-
-      await getCustomerMembershipStatus(
-
-        customer.id
-
-      );
-
-
-
-
-
-
-    return successResponse(
-
-      membership,
-
-      "Dashboard membership customer berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/app/api/dashboard/customer/purchase/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireCustomer,
-} from "@/modules/auth/permission";
-
-
-import {
-  getCustomerPurchaseAnalytics,
-} from "@/modules/dashboard/customer/purchase/purchase.service";
-
-
-
-
-// =========================
-// GET CUSTOMER PURCHASE ANALYTICS
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    const customer =
-
-      await requireCustomer(
-
-        request
-
-      );
-
-
-
-
-
-    const purchase =
-
-      await getCustomerPurchaseAnalytics(
-
-        customer.id
-
-      );
-
-
-
-
-
-
-    return successResponse(
-
-      purchase,
-
-      "Dashboard purchase customer berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/app/api/dashboard/customer/recommendation/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireCustomer,
-} from "@/modules/auth/permission";
-
-
-import {
-  getCustomerRecommendation,
-} from "@/modules/dashboard/customer/recommendation/recommendation.service";
-
-
-
-
-// =========================
-// GET CUSTOMER RECOMMENDATION
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    const customer =
-
-      await requireCustomer(
-
-        request
-
-      );
-
-
-
-
-
-    const recommendation =
-
-      await getCustomerRecommendation(
-
-        customer.id
-
-      );
-
-
-
-
-
-
-    return successResponse(
-
-      recommendation,
-
-      "Recommendation customer berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/app/api/dashboard/customer/summary/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireCustomer,
-} from "@/modules/auth/permission";
-
-
-import {
-  getCustomerDashboardSummary,
-} from "@/modules/dashboard/customer/summary/summary.service";
-
-
-
-
-// =========================
-// GET CUSTOMER DASHBOARD SUMMARY
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    const customer =
-
-      await requireCustomer(
-
-        request
-
-      );
-
-
-
-
-
-    const summary =
-
-      await getCustomerDashboardSummary(
-
-        customer.id
-
-      );
-
-
-
-
-
-
-    return successResponse(
-
-      summary,
-
-      "Dashboard customer summary berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/app/api/dashboard/customer/transaction/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireCustomer,
-} from "@/modules/auth/permission";
-
-
-import {
-  getCustomerTransactionHistory,
-} from "@/modules/dashboard/customer/transaction/transaction.service";
-
-
-
-
-// =========================
-// GET CUSTOMER TRANSACTION HISTORY
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    const customer =
-
-      await requireCustomer(
-
-        request
-
-      );
-
-
-
-
-
-    const transactions =
-
-      await getCustomerTransactionHistory(
-
-        customer.id
-
-      );
-
-
-
-
-
-
-    return successResponse(
-
-      transactions,
-
-      "Riwayat transaksi customer berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/app/api/dashboard/user/team-performance/route.ts">
-import {
-  NextRequest,
-} from "next/server";
-
-
-import {
-  successResponse,
-  handleError,
-} from "@/utils/response";
-
-
-import {
-  requireRole,
-} from "@/modules/auth/permission";
-
-
-import {
-  getTeamPerformanceDashboard,
-} from "@/modules/dashboard/user/team-performance/team-performance.service";
-
-
-
-
-// =========================
-// GET TEAM PERFORMANCE
-// =========================
-
-export async function GET(
-
-  request: NextRequest
-
-) {
-
-
-  try {
-
-
-    await requireRole(
-
-      request,
-
-      [
-
-        "SUPER_ADMIN",
-
-        "ADMIN",
-
-        "MANAGER",
-
-      ]
-
-    );
-
-
-
-
-
-    const dashboard =
-
-      await getTeamPerformanceDashboard();
-
-
-
-
-
-
-    return successResponse(
-
-      dashboard,
-
-      "Dashboard team performance berhasil diambil"
-
-    );
-
-
-
-
-
-  } catch(error) {
-
-
-    return handleError(
-
-      error
-
-    );
-
-
-  }
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/loyalty/loyalty.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  CustomerLoyaltyDashboard,
-} from "./loyalty.types";
-
-
-
-
-// =========================
-// GET CUSTOMER LOYALTY DASHBOARD
-// =========================
-
-export async function getCustomerLoyaltyDashboard(
-
-  customerId:string
-
-):Promise<CustomerLoyaltyDashboard>{
-
-
-
-  const customer =
-
-    await prisma.customer.findUnique({
-
-      where:{
-
-        id:customerId,
-
-      },
-
-
-      select:{
-
-
-        membership:true,
-
-
-        loyalty:{
-
-
-          select:{
-
-
-            points:true,
-
-
-            histories:{
-
-
-              orderBy:{
-
-
-                createdAt:"desc",
-
-
-              },
-
-
-              select:{
-
-
-                type:true,
-
-
-                points:true,
-
-
-                description:true,
-
-
-                createdAt:true,
-
-
-              },
-
-
-            },
-
-
-          },
-
-
-        },
-
-
-      },
-
-
-    });
-
-
-
-
-
-
-  if(!customer){
-
-    throw new Error(
-
-      "Customer tidak ditemukan"
-
-    );
-
-  }
-
-
-
-
-
-
-  const histories =
-
-    customer.loyalty?.histories ?? [];
-
-
-
-
-
-  const totalEarned =
-
-    histories
-
-
-      .filter(
-
-        item =>
-
-        item.type === "EARN"
-
-      )
-
-
-      .reduce(
-
-        (sum,item)=>
-
-          sum + item.points,
-
-        0
-
-      );
-
-
-
-
-
-
-  const totalRollback =
-
-    histories
-
-
-      .filter(
-
-        item =>
-
-        item.type === "ROLLBACK"
-
-      )
-
-
-      .reduce(
-
-        (sum,item)=>
-
-          sum + item.points,
-
-        0
-
-      );
-
-
-
-
-
-
-
-  // =========================
-  // MEMBERSHIP PROGRESS
-  // =========================
-
-
-  let nextMembership:null|string = null;
-
-  let progress = 100;
-
-
-
-  if(customer.membership === "BRONZE"){
-
-
-    nextMembership = "SILVER";
-
-    progress = 25;
-
-
-  }
-
-
-  else if(customer.membership === "SILVER"){
-
-
-    nextMembership = "GOLD";
-
-    progress = 50;
-
-
-  }
-
-
-  else if(customer.membership === "GOLD"){
-
-
-    nextMembership = "PLATINUM";
-
-    progress = 75;
-
-
-  }
-
-
-
-
-
-
-
-
-  return {
-
-
-    overview:{
-
-
-      points:
-
-        customer.loyalty?.points ?? 0,
-
-
-      totalEarned,
-
-
-      totalRollback,
-
-
-    },
-
-
-
-
-
-    membership:{
-
-
-      current:
-
-        customer.membership,
-
-
-      next:
-
-        nextMembership,
-
-
-      progress,
-
-
-    },
-
-
-
-
-
-    history:
-
-
-      histories.map(item=>({
-
-
-        type:item.type,
-
-
-        points:item.points,
-
-
-        description:item.description,
-
-
-        date:item.createdAt,
-
-
-      })),
-
-
-  };
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/loyalty/loyalty.types.ts">
-// =========================
-// CUSTOMER LOYALTY TYPES
-// =========================
-
-
-export interface CustomerLoyaltyDashboard {
-
-
-  overview: {
-
-    points:number;
-
-    totalEarned:number;
-
-    totalRollback:number;
-
-  };
-
-
-
-  membership: {
-
-    current:string;
-
-    next:string | null;
-
-    progress:number;
-
-  };
-
-
-
-  history: {
-
-    type:string;
-
-    points:number;
-
-    description:string | null;
-
-    date:Date;
-
-  }[];
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/membership/membership.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  CustomerMembershipDashboard,
-} from "./membership.types";
-
-
-
-
-// =========================
-// GET CUSTOMER MEMBERSHIP STATUS
-// =========================
-
-export async function getCustomerMembershipStatus(
-
-  customerId:string
-
-):Promise<CustomerMembershipDashboard>{
-
-
-
-  const customer =
-
-    await prisma.customer.findUnique({
-
-      where:{
-
-        id:customerId,
-
-      },
-
-
-      select:{
-
-
-        membership:true,
-
-
-        totalSpent:true,
-
-
-      },
-
-
-    });
-
-
-
-
-
-  if(!customer){
-
-    throw new Error(
-
-      "Customer tidak ditemukan"
-
-    );
-
-  }
-
-
-
-
-
-
-
-  let nextLevel:string|null = null;
-
-
-  let targetSpent = Number(customer.totalSpent);
-
-
-
-  let benefits:string[] = [];
-
-
-
-
-
-  switch(customer.membership){
-
-
-    case "BRONZE":
-
-      nextLevel = "SILVER";
-
-      targetSpent = 5000000;
-
-
-      benefits=[
-
-        "Member Bronze",
-
-        "Promo reguler",
-
-      ];
-
-      break;
-
-
-
-
-
-    case "SILVER":
-
-      nextLevel="GOLD";
-
-      targetSpent=15000000;
-
-
-      benefits=[
-
-        "Diskon member 5%",
-
-        "Promo khusus member",
-
-      ];
-
-      break;
-
-
-
-
-
-    case "GOLD":
-
-      nextLevel="PLATINUM";
-
-      targetSpent=30000000;
-
-
-      benefits=[
-
-        "Diskon member 10%",
-
-        "Prioritas promo",
-
-      ];
-
-      break;
-
-
-
-
-
-    case "PLATINUM":
-
-      nextLevel=null;
-
-      targetSpent=Number(customer.totalSpent);
-
-
-      benefits=[
-
-        "Diskon member 15%",
-
-        "VIP customer",
-
-        "Prioritas layanan",
-
-      ];
-
-      break;
-
-
-
-  }
-
-
-
-
-
-
-
-
-  const currentSpent =
-
-    Number(customer.totalSpent);
-
-
-
-
-
-
-  const percentage =
-
-
-    targetSpent > 0
-
-    ?
-
-    Math.min(
-
-      Math.round(
-
-        (
-
-          currentSpent /
-
-          targetSpent
-
-        )
-
-        *
-
-        100
-
-      ),
-
-      100
-
-    )
-
-    :
-
-    100;
-
-
-
-
-
-
-
-  return {
-
-
-    currentLevel:
-
-      customer.membership,
-
-
-
-
-
-    nextLevel,
-
-
-
-
-
-    progress:{
-
-
-      currentSpent,
-
-
-      targetSpent,
-
-
-
-      remaining:
-
-        Math.max(
-
-          targetSpent -
-
-          currentSpent,
-
-          0
-
-        ),
-
-
-
-      percentage,
-
-
-    },
-
-
-
-
-
-    benefits,
-
-
-  };
-
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/membership/membership.types.ts">
-// =========================
-// CUSTOMER MEMBERSHIP TYPES
-// =========================
-
-
-export interface CustomerMembershipDashboard {
-
-
-  currentLevel:string;
-
-
-  nextLevel:string | null;
-
-
-
-  progress:{
-
-    currentSpent:number;
-
-    targetSpent:number;
-
-    remaining:number;
-
-    percentage:number;
-
-  };
-
-
-
-  benefits:string[];
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/purchase/purchase.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  CustomerPurchaseAnalytics,
-} from "./purchase.types";
-
-
-
-
-// =========================
-// GET CUSTOMER PURCHASE ANALYTICS
-// =========================
-
-export async function getCustomerPurchaseAnalytics(
-
-  customerId:string
-
-):Promise<CustomerPurchaseAnalytics>{
-
-
-
-  const startDate = new Date();
-
-
-  startDate.setMonth(
-
-    startDate.getMonth() - 11
-
-  );
-
-
-
-
-
-  const [
-
-
-    transactions,
-
-
-    items,
-
-
-  ] = await Promise.all([
-
-
-
-
-
-    // =========================
-    // CUSTOMER TRANSACTION
-    // =========================
-
-
-    prisma.transaction.findMany({
-
-      where:{
-
-        customerId,
-
-        status:"COMPLETED",
-
-      },
-
-
-      select:{
-
-        totalAmount:true,
-
-        createdAt:true,
-
-      },
-
-
-    }),
-
-
-
-
-
-
-
-    // =========================
-    // PRODUCT PURCHASE
-    // =========================
-
-
-    prisma.transactionItem.findMany({
-
-      where:{
-
-        transaction:{
-
-          customerId,
-
-          status:"COMPLETED",
-
-        },
-
-      },
-
-
-      select:{
-
-
-        quantity:true,
-
-
-        product:{
-
-
-          select:{
-
-
-            id:true,
-
-            name:true,
-
-            category:true,
-
-
-          },
-
-        },
-
-
-
-        createdAt:true,
-
-
-      },
-
-
-    }),
-
-
-
-
-
-  ]);
-
-
-
-
-
-
-
-
-
-  // =========================
-  // OVERVIEW
-  // =========================
-
-
-  const totalTransaction =
-
-    transactions.length;
-
-
-
-
-
-  const totalSpent =
-
-    transactions.reduce(
-
-      (sum,item)=>
-
-        sum +
-
-        Number(item.totalAmount),
-
-      0
-
-    );
-
-
-
-
-
-  const averageTransaction =
-
-    totalTransaction
-
-    ?
-
-    totalSpent / totalTransaction
-
-    :
-
-    0;
-
-
-
-
-
-
-
-
-
-  // =========================
-  // SPENDING TREND
-  // =========================
-
-
-  const trendMap =
-
-    new Map<string,number>();
-
-
-
-
-  transactions.forEach((item)=>{
-
-
-    const month =
-
-      item.createdAt.toLocaleString(
-
-        "en-US",
-
-        {
-
-          month:"short",
-
-          year:"numeric",
-
-        }
-
-      );
-
-
-
-
-    trendMap.set(
-
-      month,
-
-      (
-
-        trendMap.get(month)
-
-        ??
-
-        0
-
-      )
-
-      +
-
-      Number(item.totalAmount)
-
-    );
-
-
-  });
-
-
-
-
-
-
-
-
-
-  // =========================
-  // CATEGORY
-  // =========================
-
-
-  const categoryMap =
-
-    new Map<string,number>();
-
-
-
-
-  items.forEach((item)=>{
-
-
-    const current =
-
-      categoryMap.get(
-
-        item.product.category
-
-      )
-
-      ??
-
-      0;
-
-
-
-    categoryMap.set(
-
-      item.product.category,
-
-      current +
-
-      item.quantity
-
-    );
-
-
-
-  });
-
-
-
-
-
-
-
-
-  // =========================
-  // PRODUCT
-  // =========================
-
-
-  const productMap =
-
-    new Map<
-
-      string,
-
-      {
-
-        productName:string;
-
-        quantity:number;
-
-      }
-
-    >();
-
-
-
-
-  items.forEach((item)=>{
-
-
-    const current =
-
-      productMap.get(
-
-        item.product.id
-
-      )
-
-      ??
-
-      {
-
-        productName:item.product.name,
-
-        quantity:0,
-
-      };
-
-
-
-
-
-    current.quantity += item.quantity;
-
-
-
-
-    productMap.set(
-
-      item.product.id,
-
-      current
-
-    );
-
-
-
-  });
-
-
-
-
-
-
-
-
-  return {
-
-
-    overview:{
-
-
-      totalTransaction,
-
-
-      totalSpent,
-
-
-      averageTransaction,
-
-
-    },
-
-
-
-
-
-    spendingTrend:
-
-
-      Array.from(
-
-        trendMap.entries()
-
-      )
-
-      .map(([month,spent])=>({
-
-
-        month,
-
-        spent,
-
-
-      })),
-
-
-
-
-
-
-    favoriteCategory:
-
-
-      Array.from(
-
-        categoryMap.entries()
-
-      )
-
-      .map(([category,totalPurchase])=>({
-
-
-        category,
-
-        totalPurchase,
-
-
-      }))
-
-      .sort(
-
-        (a,b)=>
-
-          b.totalPurchase -
-
-          a.totalPurchase
-
-      ),
-
-
-
-
-
-
-    favoriteProduct:
-
-
-      Array.from(
-
-        productMap.entries()
-
-      )
-
-      .map(([productId,value])=>({
-
-
-        productId,
-
-
-        productName:value.productName,
-
-
-        quantity:value.quantity,
-
-
-      }))
-
-      .sort(
-
-        (a,b)=>
-
-          b.quantity -
-
-          a.quantity
-
-      )
-
-      .slice(0,10),
-
-
-
-  };
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/purchase/purchase.types.ts">
-// =========================
-// CUSTOMER PURCHASE TYPES
-// =========================
-
-
-export interface CustomerPurchaseAnalytics {
-
-
-  overview: {
-
-    totalTransaction: number;
-
-    totalSpent: number;
-
-    averageTransaction: number;
-
-  };
-
-
-
-  spendingTrend: {
-
-    month: string;
-
-    spent: number;
-
-  }[];
-
-
-
-  favoriteCategory: {
-
-    category: string;
-
-    totalPurchase: number;
-
-  }[];
-
-
-
-  favoriteProduct: {
-
-    productId: string;
-
-    productName: string;
-
-    quantity: number;
-
-  }[];
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/recommendation/recommendation.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  CustomerRecommendation,
-} from "./recommendation.types";
-
-
-
-
-// =========================
-// GET CUSTOMER RECOMMENDATION
-// =========================
-
-export async function getCustomerRecommendation(
-
-  customerId:string
-
-):Promise<CustomerRecommendation>{
-
-
-
-  // =========================
-  // GET CUSTOMER PURCHASE
-  // =========================
-
-  const purchasedItems =
-
-    await prisma.transactionItem.findMany({
-
-      where:{
-
-
-        transaction:{
-
-
-          customerId,
-
-
-          status:"COMPLETED",
-
-
-        },
-
-
-      },
-
-
-      select:{
-
-
-        productId:true,
-
-
-        product:{
-
-
-          select:{
-
-
-            category:true,
-
-
-          },
-
-
-        },
-
-
-      },
-
-
-    });
-
-
-
-
-
-
-
-  if(!purchasedItems.length){
-
-
-    const products =
-
-      await prisma.product.findMany({
-
-        where:{
-
-          isActive:true,
-
-        },
-
-
-        orderBy:{
-
-          stock:"desc",
-
-        },
-
-
-        take:10,
-
-
-        select:{
-
-
-          id:true,
-
-          name:true,
-
-          category:true,
-
-          price:true,
-
-
-        },
-
-
-      });
-
-
-
-
-
-    return {
-
-
-      recommendations:
-
-        products.map(product=>({
-
-
-          productId:product.id,
-
-
-          productName:product.name,
-
-
-          category:product.category,
-
-
-          price:Number(product.price),
-
-
-          reason:
-
-          "Produk populer untuk customer baru",
-
-
-
-        })),
-
-
-
-    };
-
-
-  }
-
-
-
-
-
-
-
-
-  // =========================
-  // FAVORITE CATEGORY
-  // =========================
-
-
-  const categoryMap =
-
-    new Map<string,number>();
-
-
-
-
-  purchasedItems.forEach(item=>{
-
-
-    const category =
-
-      item.product.category;
-
-
-
-
-    categoryMap.set(
-
-      category,
-
-      (
-
-        categoryMap.get(category)
-
-        ??
-
-        0
-
-      ) + 1
-
-    );
-
-
-  });
-
-
-
-
-
-
-  const favoriteCategory =
-
-    Array.from(
-
-      categoryMap.entries()
-
-    )
-
-    .sort(
-
-      (a,b)=>
-
-      b[1]-a[1]
-
-    )[0][0];
-
-
-
-
-
-
-
-
-  // =========================
-  // EXISTING PRODUCTS
-  // =========================
-
-
-  const purchasedProductIds =
-
-    purchasedItems.map(
-
-      item => item.productId
-
-    );
-
-
-
-
-
-
-
-
-  // =========================
-  // RECOMMEND PRODUCT
-  // =========================
-
-
-  const products =
-
-    await prisma.product.findMany({
-
-      where:{
-
-
-        isActive:true,
-
-
-        category:
-
-          favoriteCategory,
-
-
-        id:{
-
-          notIn:
-
-            purchasedProductIds,
-
-        },
-
-
-      },
-
-
-      orderBy:{
-
-
-        stock:"desc",
-
-
-      },
-
-
-      take:10,
-
-
-      select:{
-
-
-        id:true,
-
-        name:true,
-
-        category:true,
-
-        price:true,
-
-
-      },
-
-
-    });
-
-
-
-
-
-
-
-
-
-  return {
-
-
-    recommendations:
-
-
-      products.map(product=>({
-
-
-        productId:
-
-          product.id,
-
-
-        productName:
-
-          product.name,
-
-
-        category:
-
-          product.category,
-
-
-        price:
-
-          Number(product.price),
-
-
-
-        reason:
-
-
-          `Karena Anda sering membeli kategori ${favoriteCategory}`,
-
-
-
-      })),
-
-
-  };
-
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/recommendation/recommendation.types.ts">
-// =========================
-// CUSTOMER RECOMMENDATION TYPES
-// =========================
-
-
-export interface CustomerRecommendation {
-
-
-  recommendations: {
-
-
-    productId:string;
-
-
-    productName:string;
-
-
-    category:string;
-
-
-    price:number;
-
-
-    reason:string;
-
-
-  }[];
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/summary/summary.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  CustomerDashboardSummary,
-} from "./summary.types";
-
-
-
-
-// =========================
-// GET CUSTOMER DASHBOARD SUMMARY
-// =========================
-
-export async function getCustomerDashboardSummary(
-
-  customerId:string
-
-):Promise<CustomerDashboardSummary>{
-
-
-
-  const customer = await prisma.customer.findUnique({
-
-    where:{
-      id:customerId,
-    },
-
-
-    select:{
-
-
-      name:true,
-
-      membership:true,
-
-      totalSpent:true,
-
-      createdAt:true,
-
-
-      loyalty:{
-
-        select:{
-
-          points:true,
-
-        },
-
-      },
-
-
-    },
-
-
-  });
-
-
-
-
-
-  if(!customer){
-
-    throw new Error(
-      "Customer tidak ditemukan"
-    );
-
-  }
-
-
-
-
-
-
-
-  const [
-
-
-    totalTransaction,
-
-
-    lastTransaction,
-
-
-    transactionItems,
-
-
-
-  ] = await Promise.all([
-
-
-
-
-
-    // TOTAL TRANSACTION
-    prisma.transaction.count({
-
-      where:{
-
-        customerId,
-
-        status:"COMPLETED",
-
-      },
-
-    }),
-
-
-
-
-
-    // LAST TRANSACTION
-
-    prisma.transaction.findFirst({
-
-      where:{
-
-        customerId,
-
-      },
-
-
-      orderBy:{
-
-        createdAt:"desc",
-
-      },
-
-
-      select:{
-
-
-        invoiceNumber:true,
-
-        totalAmount:true,
-
-        createdAt:true,
-
-
-      },
-
-
-    }),
-
-
-
-
-
-    // PRODUCT PURCHASE
-
-    prisma.transactionItem.findMany({
-
-      where:{
-
-
-        transaction:{
-
-          customerId,
-
-          status:"COMPLETED",
-
-        },
-
-
-      },
-
-
-      select:{
-
-
-        quantity:true,
-
-
-        product:{
-
-          select:{
-
-
-            name:true,
-
-
-          },
-
-        },
-
-
-      },
-
-    }),
-
-
-
-
-
-  ]);
-
-
-
-
-
-
-
-
-
-  const productMap =
-
-    new Map<string,number>();
-
-
-
-
-  transactionItems.forEach((item)=>{
-
-
-    const current =
-
-      productMap.get(
-
-        item.product.name
-
-      )
-
-      ??
-
-      0;
-
-
-
-
-    productMap.set(
-
-      item.product.name,
-
-      current + item.quantity
-
-    );
-
-
-  });
-
-
-
-
-
-
-
-  let favoriteProduct = null;
-
-
-
-
-
-  if(productMap.size > 0){
-
-
-    const sorted =
-
-      Array.from(
-
-        productMap.entries()
-
-      )
-
-      .sort(
-
-        (a,b)=>
-
-        b[1]-a[1]
-
-      );
-
-
-
-
-    favoriteProduct={
-
-      productName:sorted[0][0],
-
-      totalPurchase:sorted[0][1],
-
-    };
-
-
-  }
-
-
-
-
-
-
-
-  return {
-
-
-    overview:{
-
-
-      customerName:customer.name,
-
-
-      membership:customer.membership,
-
-
-      totalSpent:Number(customer.totalSpent),
-
-
-      totalTransaction,
-
-
-      loyaltyPoints:
-
-        customer.loyalty?.points ?? 0,
-
-
-    },
-
-
-
-
-
-    lastTransaction:
-
-      lastTransaction
-
-      ?
-
-      {
-
-        invoiceNumber:
-
-          lastTransaction.invoiceNumber,
-
-
-        amount:
-
-          Number(lastTransaction.totalAmount),
-
-
-        date:
-
-          lastTransaction.createdAt,
-
-
-      }
-
-      :
-
-      null,
-
-
-
-
-
-
-
-    favoriteProduct,
-
-
-
-
-
-
-
-    customerSince:
-
-      customer.createdAt,
-
-
-
-  };
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/summary/summary.types.ts">
-// =========================
-// CUSTOMER DASHBOARD SUMMARY TYPES
-// =========================
-
-
-export interface CustomerDashboardSummary {
-
-
-  overview: {
-
-    customerName: string;
-
-    membership: string;
-
-    totalSpent: number;
-
-    totalTransaction: number;
-
-    loyaltyPoints: number;
-
-  };
-
-
-
-  lastTransaction: {
-
-    invoiceNumber: string;
-
-    amount: number;
-
-    date: Date;
-
-  } | null;
-
-
-
-
-  favoriteProduct: {
-
-    productName: string;
-
-    totalPurchase: number;
-
-  } | null;
-
-
-
-
-  customerSince: Date;
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/transaction/transaction.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  CustomerTransactionHistory,
-} from "./transaction.types";
-
-
-
-
-// =========================
-// GET CUSTOMER TRANSACTION HISTORY
-// =========================
-
-export async function getCustomerTransactionHistory(
-
-  customerId:string
-
-):Promise<CustomerTransactionHistory>{
-
-
-
-  const transactions =
-
-    await prisma.transaction.findMany({
-
-      where:{
-
-        customerId,
-
-      },
-
-
-      orderBy:{
-
-        transactionDate:"desc",
-
-      },
-
-
-      select:{
-
-
-        id:true,
-
-
-        invoiceNumber:true,
-
-
-        transactionDate:true,
-
-
-        totalAmount:true,
-
-
-        paymentMethod:true,
-
-
-        paymentStatus:true,
-
-
-        status:true,
-
-
-
-        items:{
-
-
-          select:{
-
-
-            productId:true,
-
-
-            quantity:true,
-
-
-            price:true,
-
-
-            subtotal:true,
-
-
-
-            product:{
-
-
-              select:{
-
-
-                name:true,
-
-
-              },
-
-
-            },
-
-
-          },
-
-
-        },
-
-
-      },
-
-
-    });
-
-
-
-
-
-
-
-
-
-  const totalTransaction =
-
-    transactions.length;
-
-
-
-
-
-  const totalSpent =
-
-    transactions.reduce(
-
-      (sum,item)=>
-
-        sum +
-
-        Number(item.totalAmount),
-
-      0
-
-    );
-
-
-
-
-
-
-
-
-
-  return {
-
-
-    summary:{
-
-
-      totalTransaction,
-
-
-      totalSpent,
-
-
-    },
-
-
-
-
-
-
-    transactions:
-
-
-      transactions.map((transaction)=>({
-
-
-        id:transaction.id,
-
-
-        invoiceNumber:
-
-          transaction.invoiceNumber,
-
-
-
-        transactionDate:
-
-          transaction.transactionDate,
-
-
-
-        totalAmount:
-
-          Number(transaction.totalAmount),
-
-
-
-        paymentMethod:
-
-          transaction.paymentMethod,
-
-
-
-        paymentStatus:
-
-          transaction.paymentStatus,
-
-
-
-        status:
-
-          transaction.status,
-
-
-
-
-
-        items:
-
-
-          transaction.items.map((item)=>({
-
-
-
-            productId:
-
-              item.productId,
-
-
-
-            productName:
-
-              item.product.name,
-
-
-
-            quantity:
-
-              item.quantity,
-
-
-
-            price:
-
-              Number(item.price),
-
-
-
-            subtotal:
-
-              Number(item.subtotal),
-
-
-
-          })),
-
-
-
-      })),
-
-
-
-  };
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/customer/transaction/transaction.types.ts">
-// =========================
-// CUSTOMER TRANSACTION TYPES
-// =========================
-
-
-export interface CustomerTransactionHistory {
-
-
-  summary: {
-
-    totalTransaction: number;
-
-    totalSpent: number;
-
-  };
-
-
-
-  transactions: {
-
-    id: string;
-
-    invoiceNumber: string;
-
-    transactionDate: Date;
-
-    totalAmount: number;
-
-    paymentMethod: string;
-
-    paymentStatus: string;
-
-    status: string;
-
-
-    items: {
-
-      productId: string;
-
-      productName: string;
-
-      quantity: number;
-
-      price: number;
-
-      subtotal: number;
-
-    }[];
-
-
-  }[];
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/user/team-performance/team-performance.service.ts">
-import { prisma } from "@/lib/prisma";
-
-
-import type {
-  TeamPerformanceDashboard,
-} from "./team-performance.types";
-
-
-
-
-// =========================
-// GET TEAM PERFORMANCE
-// =========================
-
-export async function getTeamPerformanceDashboard()
-
-:Promise<TeamPerformanceDashboard>{
-
-
-
-
-
-  // =========================
-  // GET STAFF PERFORMANCE
-  // =========================
-
-  const users =
-
-    await prisma.user.findMany({
-
-      where: {
-
-        isActive:true,
-
-        role: {
-
-          in:[
-
-            "SALES",
-
-            "MANAGER",
-
-            "ADMIN",
-
-            "SUPER_ADMIN",
-
-          ],
-
-        },
-
-      },
-
-
-      select:{
-
-
-        id:true,
-
-
-        name:true,
-
-
-        role:true,
-
-
-
-        transactions:{
-
-
-          where:{
-
-
-            status:"COMPLETED",
-
-
-          },
-
-
-          select:{
-
-
-            totalAmount:true,
-
-
-            customerId:true,
-
-
-            items:{
-
-
-              select:{
-
-
-                quantity:true,
-
-
-                product:{
-
-
-                  select:{
-
-
-                    name:true,
-
-
-                  },
-
-
-                },
-
-
-              },
-
-
-            },
-
-
-          },
-
-
-        },
-
-
-      },
-
-
-    });
-
-
-
-
-
-
-
-  const ranking = users.map(user=>{
-
-
-    const transaction =
-
-      user.transactions.length;
-
-
-
-
-    const revenue =
-
-      user.transactions.reduce(
-
-        (sum,item)=>
-
-          sum +
-
-          Number(item.totalAmount),
-
-        0
-
-      );
-
-
-
-
-
-    const customer =
-
-      new Set(
-
-        user.transactions.map(
-
-          trx => trx.customerId
-
-        )
-
-      ).size;
-
-
-
-
-
-
-    return {
-
-
-      userId:user.id,
-
-
-      name:user.name,
-
-
-      role:user.role,
-
-
-      transaction,
-
-
-      revenue,
-
-
-      customer,
-
-
-    };
-
-
-
-  })
-
-  .sort(
-
-    (a,b)=>
-
-      b.revenue -
-
-      a.revenue
-
-  );
-
-
-
-
-
-
-
-
-
-  // =========================
-  // OVERVIEW
-  // =========================
-
-
-  const totalStaff =
-
-    users.length;
-
-
-
-
-  const totalRevenue =
-
-    ranking.reduce(
-
-      (sum,user)=>
-
-        sum +
-
-        user.revenue,
-
-      0
-
-    );
-
-
-
-
-
-  const totalTransaction =
-
-    ranking.reduce(
-
-      (sum,user)=>
-
-        sum +
-
-        user.transaction,
-
-      0
-
-    );
-
-
-
-
-
-
-
-  const averageRevenue =
-
-    totalStaff > 0
-
-    ?
-
-    totalRevenue /
-
-    totalStaff
-
-    :
-
-    0;
-
-
-
-
-
-
-
-
-
-  // =========================
-  // TOP PRODUCT PER TEAM
-  // =========================
-
-
-  const productMap =
-
-    new Map<
-
-      string,
-
-      {
-
-        userName:string;
-
-        quantity:number;
-
-      }
-
-    >();
-
-
-
-
-
-
-
-  users.forEach(user=>{
-
-
-    user.transactions.forEach(trx=>{
-
-
-      trx.items.forEach(item=>{
-
-
-        const key =
-
-          `${user.name}-${item.product.name}`;
-
-
-
-
-
-        const current =
-
-          productMap.get(key);
-
-
-
-
-
-        productMap.set(
-
-          key,
-
-          {
-
-            userName:user.name,
-
-
-            quantity:
-
-              (
-
-                current?.quantity
-
-                ??
-
-                0
-
-              )
-
-              +
-
-              item.quantity,
-
-          }
-
-        );
-
-
-      });
-
-
-    });
-
-
-  });
-
-
-
-
-
-
-
-
-  const topProducts =
-
-    Array.from(
-
-      productMap.entries()
-
-    )
-
-    .map(([key,value])=>{
-
-
-      const productName =
-
-        key.split("-")[1];
-
-
-
-      return {
-
-
-        userName:value.userName,
-
-
-        productName,
-
-
-        quantity:value.quantity,
-
-
-      };
-
-
-    })
-
-    .sort(
-
-      (a,b)=>
-
-        b.quantity -
-
-        a.quantity
-
-    )
-
-    .slice(
-
-      0,
-
-      10
-
-    );
-
-
-
-
-
-
-
-
-  return {
-
-
-    overview:{
-
-
-      totalStaff,
-
-
-      totalRevenue,
-
-
-      totalTransaction,
-
-
-      averageRevenue,
-
-
-    },
-
-
-
-    ranking,
-
-
-
-    topProducts,
-
-
-  };
-
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/user/team-performance/team-performance.types.ts">
-export interface TeamPerformanceDashboard {
-
-
-  overview: {
-
-    totalStaff:number;
-
-    totalRevenue:number;
-
-    totalTransaction:number;
-
-    averageRevenue:number;
-
-  };
-
-
-
-  ranking: {
-
-    userId:string;
-
-    name:string;
-
-    role:string;
-
-    transaction:number;
-
-    revenue:number;
-
-    customer:number;
-
-  }[];
-
-
-
-  topProducts: {
-
-    userName:string;
-
-    productName:string;
-
-    quantity:number;
-
-  }[];
-
-
-}
-</file>
 
 <file path=".agents/skills/prisma-cli/references/agent-safety.md">
 # AI safety checkpoint for destructive commands
@@ -16065,6 +12476,556 @@ export async function GET() {
 }
 </file>
 
+<file path="src/app/api/dashboard/customer/activity/route.ts">
+
+</file>
+
+<file path="src/app/api/dashboard/customer/loyalty/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireCustomer,
+} from "@/modules/auth/permission";
+
+
+import {
+  getCustomerLoyaltyDashboard,
+} from "@/modules/dashboard/customer/loyalty/loyalty.service";
+
+
+
+
+// =========================
+// GET CUSTOMER LOYALTY DASHBOARD
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    const customer =
+
+      await requireCustomer(
+
+        request
+
+      );
+
+
+
+
+
+    const loyalty =
+
+      await getCustomerLoyaltyDashboard(
+
+        customer.id
+
+      );
+
+
+
+
+
+
+    return successResponse(
+
+      loyalty,
+
+      "Dashboard loyalty customer berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
+<file path="src/app/api/dashboard/customer/membership/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireCustomer,
+} from "@/modules/auth/permission";
+
+
+import {
+  getCustomerMembershipStatus,
+} from "@/modules/dashboard/customer/membership/membership.service";
+
+
+
+
+// =========================
+// GET CUSTOMER MEMBERSHIP STATUS
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    const customer =
+
+      await requireCustomer(
+
+        request
+
+      );
+
+
+
+
+
+    const membership =
+
+      await getCustomerMembershipStatus(
+
+        customer.id
+
+      );
+
+
+
+
+
+
+    return successResponse(
+
+      membership,
+
+      "Dashboard membership customer berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
+<file path="src/app/api/dashboard/customer/purchase/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireCustomer,
+} from "@/modules/auth/permission";
+
+
+import {
+  getCustomerPurchaseAnalytics,
+} from "@/modules/dashboard/customer/purchase/purchase.service";
+
+
+
+
+// =========================
+// GET CUSTOMER PURCHASE ANALYTICS
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    const customer =
+
+      await requireCustomer(
+
+        request
+
+      );
+
+
+
+
+
+    const purchase =
+
+      await getCustomerPurchaseAnalytics(
+
+        customer.id
+
+      );
+
+
+
+
+
+
+    return successResponse(
+
+      purchase,
+
+      "Dashboard purchase customer berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
+<file path="src/app/api/dashboard/customer/recommendation/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireCustomer,
+} from "@/modules/auth/permission";
+
+
+import {
+  getCustomerRecommendation,
+} from "@/modules/dashboard/customer/recommendation/recommendation.service";
+
+
+
+
+// =========================
+// GET CUSTOMER RECOMMENDATION
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    const customer =
+
+      await requireCustomer(
+
+        request
+
+      );
+
+
+
+
+
+    const recommendation =
+
+      await getCustomerRecommendation(
+
+        customer.id
+
+      );
+
+
+
+
+
+
+    return successResponse(
+
+      recommendation,
+
+      "Recommendation customer berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
+<file path="src/app/api/dashboard/customer/summary/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireCustomer,
+} from "@/modules/auth/permission";
+
+
+import {
+  getCustomerDashboardSummary,
+} from "@/modules/dashboard/customer/summary/summary.service";
+
+
+
+
+// =========================
+// GET CUSTOMER DASHBOARD SUMMARY
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    const customer =
+
+      await requireCustomer(
+
+        request
+
+      );
+
+
+
+
+
+    const summary =
+
+      await getCustomerDashboardSummary(
+
+        customer.id
+
+      );
+
+
+
+
+
+
+    return successResponse(
+
+      summary,
+
+      "Dashboard customer summary berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
+<file path="src/app/api/dashboard/customer/transaction/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireCustomer,
+} from "@/modules/auth/permission";
+
+
+import {
+  getCustomerTransactionHistory,
+} from "@/modules/dashboard/customer/transaction/transaction.service";
+
+
+
+
+// =========================
+// GET CUSTOMER TRANSACTION HISTORY
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    const customer =
+
+      await requireCustomer(
+
+        request
+
+      );
+
+
+
+
+
+    const transactions =
+
+      await getCustomerTransactionHistory(
+
+        customer.id
+
+      );
+
+
+
+
+
+
+    return successResponse(
+
+      transactions,
+
+      "Riwayat transaksi customer berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
 <file path="src/app/api/dashboard/user/audit/route.ts">
 import {
   NextRequest,
@@ -16816,6 +13777,101 @@ export async function GET(
 }
 </file>
 
+<file path="src/app/api/dashboard/user/team-performance/route.ts">
+import {
+  NextRequest,
+} from "next/server";
+
+
+import {
+  successResponse,
+  handleError,
+} from "@/utils/response";
+
+
+import {
+  requireRole,
+} from "@/modules/auth/permission";
+
+
+import {
+  getTeamPerformanceDashboard,
+} from "@/modules/dashboard/user/team-performance/team-performance.service";
+
+
+
+
+// =========================
+// GET TEAM PERFORMANCE
+// =========================
+
+export async function GET(
+
+  request: NextRequest
+
+) {
+
+
+  try {
+
+
+    await requireRole(
+
+      request,
+
+      [
+
+        "SUPER_ADMIN",
+
+        "ADMIN",
+
+        "MANAGER",
+
+      ]
+
+    );
+
+
+
+
+
+    const dashboard =
+
+      await getTeamPerformanceDashboard();
+
+
+
+
+
+
+    return successResponse(
+
+      dashboard,
+
+      "Dashboard team performance berhasil diambil"
+
+    );
+
+
+
+
+
+  } catch(error) {
+
+
+    return handleError(
+
+      error
+
+    );
+
+
+  }
+
+
+}
+</file>
+
 <file path="src/app/api/products/[id]/route.ts">
 import {
   NextRequest,
@@ -17202,86 +14258,6 @@ export async function GET(
       error
     );
 
-
-  }
-
-}
-</file>
-
-<file path="src/app/api/test-db/route.ts">
-import { validate } from "@/validations/validate";
-import { testSchema } from "@/validations/test.validation";
-import { successResponse, handleError } from "@/utils/response";
-
-
-export async function POST(request: Request) {
-
-  try {
-
-    const body = await request.json();
-
-
-    const data = validate(
-      testSchema,
-      body
-    );
-
-
-    return successResponse(
-      data,
-      "Validation success"
-    );
-
-
-  } catch(error) {
-
-    return handleError(error);
-
-  }
-
-}
-</file>
-
-<file path="src/app/api/test-password/route.ts">
-import {
-  hashPassword,
-  comparePassword,
-} from "@/modules/auth/auth.utils";
-
-import {
-  successResponse,
-  handleError
-} from "@/utils/response";
-
-
-export async function GET() {
-
-  try {
-
-    const password = "Admin123!";
-
-
-    const hash = await hashPassword(
-      password
-    );
-
-
-    const compare =
-      await comparePassword(
-        password,
-        hash
-      );
-
-
-    return successResponse({
-      hash,
-      compare,
-    });
-
-
-  } catch(error) {
-
-    return handleError(error);
 
   }
 
@@ -19993,6 +16969,2405 @@ export async function getCustomerSegmentSummary() {
 }
 </file>
 
+<file path="src/modules/dashboard/customer/loyalty/loyalty.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  CustomerLoyaltyDashboard,
+} from "./loyalty.types";
+
+
+
+
+// =========================
+// GET CUSTOMER LOYALTY DASHBOARD
+// =========================
+
+export async function getCustomerLoyaltyDashboard(
+
+  customerId:string
+
+):Promise<CustomerLoyaltyDashboard>{
+
+
+
+  const customer =
+
+    await prisma.customer.findUnique({
+
+      where:{
+
+        id:customerId,
+
+      },
+
+
+      select:{
+
+
+        membership:true,
+
+
+        loyalty:{
+
+
+          select:{
+
+
+            points:true,
+
+
+            histories:{
+
+
+              orderBy:{
+
+
+                createdAt:"desc",
+
+
+              },
+
+
+              select:{
+
+
+                type:true,
+
+
+                points:true,
+
+
+                description:true,
+
+
+                createdAt:true,
+
+
+              },
+
+
+            },
+
+
+          },
+
+
+        },
+
+
+      },
+
+
+    });
+
+
+
+
+
+
+  if(!customer){
+
+    throw new Error(
+
+      "Customer tidak ditemukan"
+
+    );
+
+  }
+
+
+
+
+
+
+  const histories =
+
+    customer.loyalty?.histories ?? [];
+
+
+
+
+
+  const totalEarned =
+
+    histories
+
+
+      .filter(
+
+        item =>
+
+        item.type === "EARN"
+
+      )
+
+
+      .reduce(
+
+        (sum,item)=>
+
+          sum + item.points,
+
+        0
+
+      );
+
+
+
+
+
+
+  const totalRollback =
+
+    histories
+
+
+      .filter(
+
+        item =>
+
+        item.type === "ROLLBACK"
+
+      )
+
+
+      .reduce(
+
+        (sum,item)=>
+
+          sum + item.points,
+
+        0
+
+      );
+
+
+
+
+
+
+
+  // =========================
+  // MEMBERSHIP PROGRESS
+  // =========================
+
+
+  let nextMembership:null|string = null;
+
+  let progress = 100;
+
+
+
+  if(customer.membership === "BRONZE"){
+
+
+    nextMembership = "SILVER";
+
+    progress = 25;
+
+
+  }
+
+
+  else if(customer.membership === "SILVER"){
+
+
+    nextMembership = "GOLD";
+
+    progress = 50;
+
+
+  }
+
+
+  else if(customer.membership === "GOLD"){
+
+
+    nextMembership = "PLATINUM";
+
+    progress = 75;
+
+
+  }
+
+
+
+
+
+
+
+
+  return {
+
+
+    overview:{
+
+
+      points:
+
+        customer.loyalty?.points ?? 0,
+
+
+      totalEarned,
+
+
+      totalRollback,
+
+
+    },
+
+
+
+
+
+    membership:{
+
+
+      current:
+
+        customer.membership,
+
+
+      next:
+
+        nextMembership,
+
+
+      progress,
+
+
+    },
+
+
+
+
+
+    history:
+
+
+      histories.map(item=>({
+
+
+        type:item.type,
+
+
+        points:item.points,
+
+
+        description:item.description,
+
+
+        date:item.createdAt,
+
+
+      })),
+
+
+  };
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/loyalty/loyalty.types.ts">
+// =========================
+// CUSTOMER LOYALTY TYPES
+// =========================
+
+
+export interface CustomerLoyaltyDashboard {
+
+
+  overview: {
+
+    points:number;
+
+    totalEarned:number;
+
+    totalRollback:number;
+
+  };
+
+
+
+  membership: {
+
+    current:string;
+
+    next:string | null;
+
+    progress:number;
+
+  };
+
+
+
+  history: {
+
+    type:string;
+
+    points:number;
+
+    description:string | null;
+
+    date:Date;
+
+  }[];
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/membership/membership.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  CustomerMembershipDashboard,
+} from "./membership.types";
+
+
+
+
+// =========================
+// GET CUSTOMER MEMBERSHIP STATUS
+// =========================
+
+export async function getCustomerMembershipStatus(
+
+  customerId:string
+
+):Promise<CustomerMembershipDashboard>{
+
+
+
+  const customer =
+
+    await prisma.customer.findUnique({
+
+      where:{
+
+        id:customerId,
+
+      },
+
+
+      select:{
+
+
+        membership:true,
+
+
+        totalSpent:true,
+
+
+      },
+
+
+    });
+
+
+
+
+
+  if(!customer){
+
+    throw new Error(
+
+      "Customer tidak ditemukan"
+
+    );
+
+  }
+
+
+
+
+
+
+
+  let nextLevel:string|null = null;
+
+
+  let targetSpent = Number(customer.totalSpent);
+
+
+
+  let benefits:string[] = [];
+
+
+
+
+
+  switch(customer.membership){
+
+
+    case "BRONZE":
+
+      nextLevel = "SILVER";
+
+      targetSpent = 5000000;
+
+
+      benefits=[
+
+        "Member Bronze",
+
+        "Promo reguler",
+
+      ];
+
+      break;
+
+
+
+
+
+    case "SILVER":
+
+      nextLevel="GOLD";
+
+      targetSpent=15000000;
+
+
+      benefits=[
+
+        "Diskon member 5%",
+
+        "Promo khusus member",
+
+      ];
+
+      break;
+
+
+
+
+
+    case "GOLD":
+
+      nextLevel="PLATINUM";
+
+      targetSpent=30000000;
+
+
+      benefits=[
+
+        "Diskon member 10%",
+
+        "Prioritas promo",
+
+      ];
+
+      break;
+
+
+
+
+
+    case "PLATINUM":
+
+      nextLevel=null;
+
+      targetSpent=Number(customer.totalSpent);
+
+
+      benefits=[
+
+        "Diskon member 15%",
+
+        "VIP customer",
+
+        "Prioritas layanan",
+
+      ];
+
+      break;
+
+
+
+  }
+
+
+
+
+
+
+
+
+  const currentSpent =
+
+    Number(customer.totalSpent);
+
+
+
+
+
+
+  const percentage =
+
+
+    targetSpent > 0
+
+    ?
+
+    Math.min(
+
+      Math.round(
+
+        (
+
+          currentSpent /
+
+          targetSpent
+
+        )
+
+        *
+
+        100
+
+      ),
+
+      100
+
+    )
+
+    :
+
+    100;
+
+
+
+
+
+
+
+  return {
+
+
+    currentLevel:
+
+      customer.membership,
+
+
+
+
+
+    nextLevel,
+
+
+
+
+
+    progress:{
+
+
+      currentSpent,
+
+
+      targetSpent,
+
+
+
+      remaining:
+
+        Math.max(
+
+          targetSpent -
+
+          currentSpent,
+
+          0
+
+        ),
+
+
+
+      percentage,
+
+
+    },
+
+
+
+
+
+    benefits,
+
+
+  };
+
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/membership/membership.types.ts">
+// =========================
+// CUSTOMER MEMBERSHIP TYPES
+// =========================
+
+
+export interface CustomerMembershipDashboard {
+
+
+  currentLevel:string;
+
+
+  nextLevel:string | null;
+
+
+
+  progress:{
+
+    currentSpent:number;
+
+    targetSpent:number;
+
+    remaining:number;
+
+    percentage:number;
+
+  };
+
+
+
+  benefits:string[];
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/purchase/purchase.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  CustomerPurchaseAnalytics,
+} from "./purchase.types";
+
+
+
+
+// =========================
+// GET CUSTOMER PURCHASE ANALYTICS
+// =========================
+
+export async function getCustomerPurchaseAnalytics(
+
+  customerId:string
+
+):Promise<CustomerPurchaseAnalytics>{
+
+
+
+  const startDate = new Date();
+
+
+  startDate.setMonth(
+
+    startDate.getMonth() - 11
+
+  );
+
+
+
+
+
+  const [
+
+
+    transactions,
+
+
+    items,
+
+
+  ] = await Promise.all([
+
+
+
+
+
+    // =========================
+    // CUSTOMER TRANSACTION
+    // =========================
+
+
+    prisma.transaction.findMany({
+
+      where:{
+
+        customerId,
+
+        status:"COMPLETED",
+
+      },
+
+
+      select:{
+
+        totalAmount:true,
+
+        createdAt:true,
+
+      },
+
+
+    }),
+
+
+
+
+
+
+
+    // =========================
+    // PRODUCT PURCHASE
+    // =========================
+
+
+    prisma.transactionItem.findMany({
+
+      where:{
+
+        transaction:{
+
+          customerId,
+
+          status:"COMPLETED",
+
+        },
+
+      },
+
+
+      select:{
+
+
+        quantity:true,
+
+
+        product:{
+
+
+          select:{
+
+
+            id:true,
+
+            name:true,
+
+            category:true,
+
+
+          },
+
+        },
+
+
+
+        createdAt:true,
+
+
+      },
+
+
+    }),
+
+
+
+
+
+  ]);
+
+
+
+
+
+
+
+
+
+  // =========================
+  // OVERVIEW
+  // =========================
+
+
+  const totalTransaction =
+
+    transactions.length;
+
+
+
+
+
+  const totalSpent =
+
+    transactions.reduce(
+
+      (sum,item)=>
+
+        sum +
+
+        Number(item.totalAmount),
+
+      0
+
+    );
+
+
+
+
+
+  const averageTransaction =
+
+    totalTransaction
+
+    ?
+
+    totalSpent / totalTransaction
+
+    :
+
+    0;
+
+
+
+
+
+
+
+
+
+  // =========================
+  // SPENDING TREND
+  // =========================
+
+
+  const trendMap =
+
+    new Map<string,number>();
+
+
+
+
+  transactions.forEach((item)=>{
+
+
+    const month =
+
+      item.createdAt.toLocaleString(
+
+        "en-US",
+
+        {
+
+          month:"short",
+
+          year:"numeric",
+
+        }
+
+      );
+
+
+
+
+    trendMap.set(
+
+      month,
+
+      (
+
+        trendMap.get(month)
+
+        ??
+
+        0
+
+      )
+
+      +
+
+      Number(item.totalAmount)
+
+    );
+
+
+  });
+
+
+
+
+
+
+
+
+
+  // =========================
+  // CATEGORY
+  // =========================
+
+
+  const categoryMap =
+
+    new Map<string,number>();
+
+
+
+
+  items.forEach((item)=>{
+
+
+    const current =
+
+      categoryMap.get(
+
+        item.product.category
+
+      )
+
+      ??
+
+      0;
+
+
+
+    categoryMap.set(
+
+      item.product.category,
+
+      current +
+
+      item.quantity
+
+    );
+
+
+
+  });
+
+
+
+
+
+
+
+
+  // =========================
+  // PRODUCT
+  // =========================
+
+
+  const productMap =
+
+    new Map<
+
+      string,
+
+      {
+
+        productName:string;
+
+        quantity:number;
+
+      }
+
+    >();
+
+
+
+
+  items.forEach((item)=>{
+
+
+    const current =
+
+      productMap.get(
+
+        item.product.id
+
+      )
+
+      ??
+
+      {
+
+        productName:item.product.name,
+
+        quantity:0,
+
+      };
+
+
+
+
+
+    current.quantity += item.quantity;
+
+
+
+
+    productMap.set(
+
+      item.product.id,
+
+      current
+
+    );
+
+
+
+  });
+
+
+
+
+
+
+
+
+  return {
+
+
+    overview:{
+
+
+      totalTransaction,
+
+
+      totalSpent,
+
+
+      averageTransaction,
+
+
+    },
+
+
+
+
+
+    spendingTrend:
+
+
+      Array.from(
+
+        trendMap.entries()
+
+      )
+
+      .map(([month,spent])=>({
+
+
+        month,
+
+        spent,
+
+
+      })),
+
+
+
+
+
+
+    favoriteCategory:
+
+
+      Array.from(
+
+        categoryMap.entries()
+
+      )
+
+      .map(([category,totalPurchase])=>({
+
+
+        category,
+
+        totalPurchase,
+
+
+      }))
+
+      .sort(
+
+        (a,b)=>
+
+          b.totalPurchase -
+
+          a.totalPurchase
+
+      ),
+
+
+
+
+
+
+    favoriteProduct:
+
+
+      Array.from(
+
+        productMap.entries()
+
+      )
+
+      .map(([productId,value])=>({
+
+
+        productId,
+
+
+        productName:value.productName,
+
+
+        quantity:value.quantity,
+
+
+      }))
+
+      .sort(
+
+        (a,b)=>
+
+          b.quantity -
+
+          a.quantity
+
+      )
+
+      .slice(0,10),
+
+
+
+  };
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/purchase/purchase.types.ts">
+// =========================
+// CUSTOMER PURCHASE TYPES
+// =========================
+
+
+export interface CustomerPurchaseAnalytics {
+
+
+  overview: {
+
+    totalTransaction: number;
+
+    totalSpent: number;
+
+    averageTransaction: number;
+
+  };
+
+
+
+  spendingTrend: {
+
+    month: string;
+
+    spent: number;
+
+  }[];
+
+
+
+  favoriteCategory: {
+
+    category: string;
+
+    totalPurchase: number;
+
+  }[];
+
+
+
+  favoriteProduct: {
+
+    productId: string;
+
+    productName: string;
+
+    quantity: number;
+
+  }[];
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/recommendation/recommendation.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  CustomerRecommendation,
+} from "./recommendation.types";
+
+
+
+
+// =========================
+// GET CUSTOMER RECOMMENDATION
+// =========================
+
+export async function getCustomerRecommendation(
+
+  customerId:string
+
+):Promise<CustomerRecommendation>{
+
+
+
+  // =========================
+  // GET CUSTOMER PURCHASE
+  // =========================
+
+  const purchasedItems =
+
+    await prisma.transactionItem.findMany({
+
+      where:{
+
+
+        transaction:{
+
+
+          customerId,
+
+
+          status:"COMPLETED",
+
+
+        },
+
+
+      },
+
+
+      select:{
+
+
+        productId:true,
+
+
+        product:{
+
+
+          select:{
+
+
+            category:true,
+
+
+          },
+
+
+        },
+
+
+      },
+
+
+    });
+
+
+
+
+
+
+
+  if(!purchasedItems.length){
+
+
+    const products =
+
+      await prisma.product.findMany({
+
+        where:{
+
+          isActive:true,
+
+        },
+
+
+        orderBy:{
+
+          stock:"desc",
+
+        },
+
+
+        take:10,
+
+
+        select:{
+
+
+          id:true,
+
+          name:true,
+
+          category:true,
+
+          price:true,
+
+
+        },
+
+
+      });
+
+
+
+
+
+    return {
+
+
+      recommendations:
+
+        products.map(product=>({
+
+
+          productId:product.id,
+
+
+          productName:product.name,
+
+
+          category:product.category,
+
+
+          price:Number(product.price),
+
+
+          reason:
+
+          "Produk populer untuk customer baru",
+
+
+
+        })),
+
+
+
+    };
+
+
+  }
+
+
+
+
+
+
+
+
+  // =========================
+  // FAVORITE CATEGORY
+  // =========================
+
+
+  const categoryMap =
+
+    new Map<string,number>();
+
+
+
+
+  purchasedItems.forEach(item=>{
+
+
+    const category =
+
+      item.product.category;
+
+
+
+
+    categoryMap.set(
+
+      category,
+
+      (
+
+        categoryMap.get(category)
+
+        ??
+
+        0
+
+      ) + 1
+
+    );
+
+
+  });
+
+
+
+
+
+
+  const favoriteCategory =
+
+    Array.from(
+
+      categoryMap.entries()
+
+    )
+
+    .sort(
+
+      (a,b)=>
+
+      b[1]-a[1]
+
+    )[0][0];
+
+
+
+
+
+
+
+
+  // =========================
+  // EXISTING PRODUCTS
+  // =========================
+
+
+  const purchasedProductIds =
+
+    purchasedItems.map(
+
+      item => item.productId
+
+    );
+
+
+
+
+
+
+
+
+  // =========================
+  // RECOMMEND PRODUCT
+  // =========================
+
+
+  const products =
+
+    await prisma.product.findMany({
+
+      where:{
+
+
+        isActive:true,
+
+
+        category:
+
+          favoriteCategory,
+
+
+        id:{
+
+          notIn:
+
+            purchasedProductIds,
+
+        },
+
+
+      },
+
+
+      orderBy:{
+
+
+        stock:"desc",
+
+
+      },
+
+
+      take:10,
+
+
+      select:{
+
+
+        id:true,
+
+        name:true,
+
+        category:true,
+
+        price:true,
+
+
+      },
+
+
+    });
+
+
+
+
+
+
+
+
+
+  return {
+
+
+    recommendations:
+
+
+      products.map(product=>({
+
+
+        productId:
+
+          product.id,
+
+
+        productName:
+
+          product.name,
+
+
+        category:
+
+          product.category,
+
+
+        price:
+
+          Number(product.price),
+
+
+
+        reason:
+
+
+          `Karena Anda sering membeli kategori ${favoriteCategory}`,
+
+
+
+      })),
+
+
+  };
+
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/recommendation/recommendation.types.ts">
+// =========================
+// CUSTOMER RECOMMENDATION TYPES
+// =========================
+
+
+export interface CustomerRecommendation {
+
+
+  recommendations: {
+
+
+    productId:string;
+
+
+    productName:string;
+
+
+    category:string;
+
+
+    price:number;
+
+
+    reason:string;
+
+
+  }[];
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/summary/summary.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  CustomerDashboardSummary,
+} from "./summary.types";
+
+
+
+
+// =========================
+// GET CUSTOMER DASHBOARD SUMMARY
+// =========================
+
+export async function getCustomerDashboardSummary(
+
+  customerId:string
+
+):Promise<CustomerDashboardSummary>{
+
+
+
+  const customer = await prisma.customer.findUnique({
+
+    where:{
+      id:customerId,
+    },
+
+
+    select:{
+
+
+      name:true,
+
+      membership:true,
+
+      totalSpent:true,
+
+      createdAt:true,
+
+
+      loyalty:{
+
+        select:{
+
+          points:true,
+
+        },
+
+      },
+
+
+    },
+
+
+  });
+
+
+
+
+
+  if(!customer){
+
+    throw new Error(
+      "Customer tidak ditemukan"
+    );
+
+  }
+
+
+
+
+
+
+
+  const [
+
+
+    totalTransaction,
+
+
+    lastTransaction,
+
+
+    transactionItems,
+
+
+
+  ] = await Promise.all([
+
+
+
+
+
+    // TOTAL TRANSACTION
+    prisma.transaction.count({
+
+      where:{
+
+        customerId,
+
+        status:"COMPLETED",
+
+      },
+
+    }),
+
+
+
+
+
+    // LAST TRANSACTION
+
+    prisma.transaction.findFirst({
+
+      where:{
+
+        customerId,
+
+      },
+
+
+      orderBy:{
+
+        createdAt:"desc",
+
+      },
+
+
+      select:{
+
+
+        invoiceNumber:true,
+
+        totalAmount:true,
+
+        createdAt:true,
+
+
+      },
+
+
+    }),
+
+
+
+
+
+    // PRODUCT PURCHASE
+
+    prisma.transactionItem.findMany({
+
+      where:{
+
+
+        transaction:{
+
+          customerId,
+
+          status:"COMPLETED",
+
+        },
+
+
+      },
+
+
+      select:{
+
+
+        quantity:true,
+
+
+        product:{
+
+          select:{
+
+
+            name:true,
+
+
+          },
+
+        },
+
+
+      },
+
+    }),
+
+
+
+
+
+  ]);
+
+
+
+
+
+
+
+
+
+  const productMap =
+
+    new Map<string,number>();
+
+
+
+
+  transactionItems.forEach((item)=>{
+
+
+    const current =
+
+      productMap.get(
+
+        item.product.name
+
+      )
+
+      ??
+
+      0;
+
+
+
+
+    productMap.set(
+
+      item.product.name,
+
+      current + item.quantity
+
+    );
+
+
+  });
+
+
+
+
+
+
+
+  let favoriteProduct = null;
+
+
+
+
+
+  if(productMap.size > 0){
+
+
+    const sorted =
+
+      Array.from(
+
+        productMap.entries()
+
+      )
+
+      .sort(
+
+        (a,b)=>
+
+        b[1]-a[1]
+
+      );
+
+
+
+
+    favoriteProduct={
+
+      productName:sorted[0][0],
+
+      totalPurchase:sorted[0][1],
+
+    };
+
+
+  }
+
+
+
+
+
+
+
+  return {
+
+
+    overview:{
+
+
+      customerName:customer.name,
+
+
+      membership:customer.membership,
+
+
+      totalSpent:Number(customer.totalSpent),
+
+
+      totalTransaction,
+
+
+      loyaltyPoints:
+
+        customer.loyalty?.points ?? 0,
+
+
+    },
+
+
+
+
+
+    lastTransaction:
+
+      lastTransaction
+
+      ?
+
+      {
+
+        invoiceNumber:
+
+          lastTransaction.invoiceNumber,
+
+
+        amount:
+
+          Number(lastTransaction.totalAmount),
+
+
+        date:
+
+          lastTransaction.createdAt,
+
+
+      }
+
+      :
+
+      null,
+
+
+
+
+
+
+
+    favoriteProduct,
+
+
+
+
+
+
+
+    customerSince:
+
+      customer.createdAt,
+
+
+
+  };
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/summary/summary.types.ts">
+// =========================
+// CUSTOMER DASHBOARD SUMMARY TYPES
+// =========================
+
+
+export interface CustomerDashboardSummary {
+
+
+  overview: {
+
+    customerName: string;
+
+    membership: string;
+
+    totalSpent: number;
+
+    totalTransaction: number;
+
+    loyaltyPoints: number;
+
+  };
+
+
+
+  lastTransaction: {
+
+    invoiceNumber: string;
+
+    amount: number;
+
+    date: Date;
+
+  } | null;
+
+
+
+
+  favoriteProduct: {
+
+    productName: string;
+
+    totalPurchase: number;
+
+  } | null;
+
+
+
+
+  customerSince: Date;
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/transaction/transaction.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  CustomerTransactionHistory,
+} from "./transaction.types";
+
+
+
+
+// =========================
+// GET CUSTOMER TRANSACTION HISTORY
+// =========================
+
+export async function getCustomerTransactionHistory(
+
+  customerId:string
+
+):Promise<CustomerTransactionHistory>{
+
+
+
+  const transactions =
+
+    await prisma.transaction.findMany({
+
+      where:{
+
+        customerId,
+
+      },
+
+
+      orderBy:{
+
+        transactionDate:"desc",
+
+      },
+
+
+      select:{
+
+
+        id:true,
+
+
+        invoiceNumber:true,
+
+
+        transactionDate:true,
+
+
+        totalAmount:true,
+
+
+        paymentMethod:true,
+
+
+        paymentStatus:true,
+
+
+        status:true,
+
+
+
+        items:{
+
+
+          select:{
+
+
+            productId:true,
+
+
+            quantity:true,
+
+
+            price:true,
+
+
+            subtotal:true,
+
+
+
+            product:{
+
+
+              select:{
+
+
+                name:true,
+
+
+              },
+
+
+            },
+
+
+          },
+
+
+        },
+
+
+      },
+
+
+    });
+
+
+
+
+
+
+
+
+
+  const totalTransaction =
+
+    transactions.length;
+
+
+
+
+
+  const totalSpent =
+
+    transactions.reduce(
+
+      (sum,item)=>
+
+        sum +
+
+        Number(item.totalAmount),
+
+      0
+
+    );
+
+
+
+
+
+
+
+
+
+  return {
+
+
+    summary:{
+
+
+      totalTransaction,
+
+
+      totalSpent,
+
+
+    },
+
+
+
+
+
+
+    transactions:
+
+
+      transactions.map((transaction)=>({
+
+
+        id:transaction.id,
+
+
+        invoiceNumber:
+
+          transaction.invoiceNumber,
+
+
+
+        transactionDate:
+
+          transaction.transactionDate,
+
+
+
+        totalAmount:
+
+          Number(transaction.totalAmount),
+
+
+
+        paymentMethod:
+
+          transaction.paymentMethod,
+
+
+
+        paymentStatus:
+
+          transaction.paymentStatus,
+
+
+
+        status:
+
+          transaction.status,
+
+
+
+
+
+        items:
+
+
+          transaction.items.map((item)=>({
+
+
+
+            productId:
+
+              item.productId,
+
+
+
+            productName:
+
+              item.product.name,
+
+
+
+            quantity:
+
+              item.quantity,
+
+
+
+            price:
+
+              Number(item.price),
+
+
+
+            subtotal:
+
+              Number(item.subtotal),
+
+
+
+          })),
+
+
+
+      })),
+
+
+
+  };
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/customer/transaction/transaction.types.ts">
+// =========================
+// CUSTOMER TRANSACTION TYPES
+// =========================
+
+
+export interface CustomerTransactionHistory {
+
+
+  summary: {
+
+    totalTransaction: number;
+
+    totalSpent: number;
+
+  };
+
+
+
+  transactions: {
+
+    id: string;
+
+    invoiceNumber: string;
+
+    transactionDate: Date;
+
+    totalAmount: number;
+
+    paymentMethod: string;
+
+    paymentStatus: string;
+
+    status: string;
+
+
+    items: {
+
+      productId: string;
+
+      productName: string;
+
+      quantity: number;
+
+      price: number;
+
+      subtotal: number;
+
+    }[];
+
+
+  }[];
+
+
+}
+</file>
+
 <file path="src/modules/dashboard/user/audit/audit.service.ts">
 import { prisma } from "@/lib/prisma";
 
@@ -20901,417 +20276,6 @@ export interface UserDashboardCustomers {
     transactionCount: number;
 
   }[];
-
-
-}
-</file>
-
-<file path="src/modules/dashboard/user/inventory/inventory.service.ts">
-import { prisma } from "@/lib/prisma";
-
-import type { UserDashboardInventory } from "./inventory.types";
-
-// =========================
-// GET USER INVENTORY DASHBOARD
-// =========================
-
-export async function getUserDashboardInventory(): Promise<UserDashboardInventory> {
-  const [
-    products,
-
-    lowStock,
-
-    totalMovement,
-
-    movementData,
-
-    recentActivity,
-
-    stockOutData,
-  ] = await Promise.all([
-    // =========================
-    // PRODUCT STOCK
-    // =========================
-
-    prisma.product.findMany({
-      where: {
-        isActive: true,
-      },
-
-      select: {
-        id: true,
-
-        category: true,
-
-        stock: true,
-
-        price: true,
-      },
-    }),
-
-    // =========================
-    // LOW STOCK
-    // =========================
-
-    prisma.product.count({
-      where: {
-        isActive: true,
-
-        stock: {
-          lte: 10,
-        },
-      },
-    }),
-
-    // =========================
-    // TOTAL INVENTORY MOVEMENT
-    // =========================
-
-    prisma.inventoryTransaction.count(),
-
-    // =========================
-    // MOVEMENT SUMMARY
-    // =========================
-
-    prisma.inventoryTransaction.findMany({
-      select: {
-        type: true,
-
-        quantity: true,
-      },
-    }),
-
-    // =========================
-    // RECENT ACTIVITY
-    // =========================
-
-    prisma.inventoryTransaction.findMany({
-      take: 10,
-
-      orderBy: {
-        createdAt: "desc",
-      },
-
-      select: {
-        productId: true,
-
-        type: true,
-
-        quantity: true,
-
-        stockBefore: true,
-
-        stockAfter: true,
-
-        createdAt: true,
-
-        product: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    }),
-
-    // =========================
-    // FAST MOVING PRODUCT
-    // STOCK OUT
-    // =========================
-
-    prisma.inventoryTransaction.findMany({
-      where: {
-        type: "STOCK_OUT",
-      },
-
-      select: {
-        quantity: true,
-
-        product: {
-          select: {
-            id: true,
-
-            name: true,
-          },
-        },
-      },
-    }),
-  ]);
-
-  // =========================
-  // STOCK VALUE
-  // =========================
-
-  const totalStock = products.reduce(
-    (total, item) => total + item.stock,
-
-    0,
-  );
-
-  const totalStockValue = products.reduce(
-    (total, item) => total + item.stock * Number(item.price),
-
-    0,
-  );
-
-  // =========================
-  // STOCK VALUE BY CATEGORY
-  // =========================
-
-  const categoryMap = new Map<
-    string,
-    {
-      totalStock: number;
-
-      stockValue: number;
-    }
-  >();
-
-  products.forEach((item) => {
-    const current = categoryMap.get(item.category) ?? {
-      totalStock: 0,
-
-      stockValue: 0,
-    };
-
-    current.totalStock += item.stock;
-
-    current.stockValue += item.stock * Number(item.price);
-
-    categoryMap.set(
-      item.category,
-
-      current,
-    );
-  });
-
-  const stockValueByCategory = Array.from(categoryMap.entries())
-
-    .map(([category, value]) => ({
-      category,
-
-      ...value,
-    }))
-
-    .sort((a, b) => b.stockValue - a.stockValue);
-
-  // =========================
-  // MOVEMENT PROCESS
-  // =========================
-
-  const movementMap = new Map<
-    string,
-    {
-      quantity: number;
-
-      totalTransaction: number;
-    }
-  >();
-
-  movementData.forEach((item) => {
-    const current = movementMap.get(item.type) ?? {
-      quantity: 0,
-
-      totalTransaction: 0,
-    };
-
-    current.quantity += item.quantity;
-
-    current.totalTransaction += 1;
-
-    movementMap.set(
-      item.type,
-
-      current,
-    );
-  });
-
-  // =========================
-  // FAST MOVING PRODUCT
-  // =========================
-
-  const fastMap = new Map<
-    string,
-    {
-      productId: string;
-
-      productName: string;
-
-      totalOut: number;
-    }
-  >();
-
-  stockOutData.forEach((item) => {
-    const id = item.product.id;
-
-    const current = fastMap.get(id) ?? {
-      productId: id,
-
-      productName: item.product.name,
-
-      totalOut: 0,
-    };
-
-    current.totalOut += item.quantity;
-
-    fastMap.set(
-      id,
-
-      current,
-    );
-  });
-
-  return {
-    overview: {
-      totalStock,
-
-      totalStockValue,
-
-      lowStock,
-
-      totalMovement,
-    },
-
-    movement: Array.from(movementMap.entries())
-
-      .map(([type, value]) => ({
-        type,
-
-        ...value,
-      })),
-
-    recentActivity: recentActivity.map((item) => ({
-      productId: item.productId,
-
-      productName: item.product.name,
-
-      type: item.type,
-
-      quantity: item.quantity,
-
-      stockBefore: item.stockBefore,
-
-      stockAfter: item.stockAfter,
-
-      createdAt: item.createdAt,
-    })),
-
-    fastMovingProducts: Array.from(fastMap.values())
-
-      .sort((a, b) => b.totalOut - a.totalOut)
-
-      .slice(0, 10),
-
-    // =========================
-    // NEW
-    // =========================
-
-    stockValueByCategory,
-  };
-}
-</file>
-
-<file path="src/modules/dashboard/user/inventory/inventory.types.ts">
-// =========================
-// USER DASHBOARD INVENTORY TYPES
-// =========================
-
-
-export interface UserDashboardInventory {
-
-
-  // =========================
-  // INVENTORY OVERVIEW
-  // =========================
-
-  overview: {
-
-    totalStock: number;
-
-    totalStockValue: number;
-
-    lowStock: number;
-
-    totalMovement: number;
-
-  };
-
-
-
-  // =========================
-  // STOCK MOVEMENT
-  // =========================
-
-  movement: {
-
-    type: string;
-
-    quantity: number;
-
-    totalTransaction: number;
-
-  }[];
-
-
-
-  // =========================
-  // RECENT INVENTORY ACTIVITY
-  // =========================
-
-  recentActivity: {
-
-    productId: string;
-
-    productName: string;
-
-    type: string;
-
-    quantity: number;
-
-    stockBefore: number;
-
-    stockAfter: number;
-
-    createdAt: Date;
-
-  }[];
-
-
-
-
-  // =========================
-  // FAST MOVING PRODUCT
-  // =========================
-
-  fastMovingProducts: {
-
-    productId: string;
-
-    productName: string;
-
-    totalOut: number;
-
-  }[];
-
-
-
-
-
-  // =========================
-  // STOCK VALUE BY CATEGORY
-  // NEW IMPROVEMENT
-  // =========================
-
-  stockValueByCategory: {
-
-    category: string;
-
-    totalStock: number;
-
-    stockValue: number;
-
-  }[];
-
-
 
 
 }
@@ -24104,6 +23068,545 @@ export interface UserDashboardSummary {
 }
 </file>
 
+<file path="src/modules/dashboard/user/team-performance/team-performance.service.ts">
+import { prisma } from "@/lib/prisma";
+
+
+import type {
+  TeamPerformanceDashboard,
+} from "./team-performance.types";
+
+
+
+
+// =========================
+// GET TEAM PERFORMANCE
+// =========================
+
+export async function getTeamPerformanceDashboard()
+
+:Promise<TeamPerformanceDashboard>{
+
+
+
+
+
+  // =========================
+  // GET STAFF PERFORMANCE
+  // =========================
+
+  const users =
+
+    await prisma.user.findMany({
+
+      where: {
+
+        isActive:true,
+
+        role: {
+
+          in:[
+
+            "SALES",
+
+            "MANAGER",
+
+            "ADMIN",
+
+            "SUPER_ADMIN",
+
+          ],
+
+        },
+
+      },
+
+
+      select:{
+
+
+        id:true,
+
+
+        name:true,
+
+
+        role:true,
+
+
+
+        transactions:{
+
+
+          where:{
+
+
+            status:"COMPLETED",
+
+
+          },
+
+
+          select:{
+
+
+            totalAmount:true,
+
+
+            customerId:true,
+
+
+            items:{
+
+
+              select:{
+
+
+                quantity:true,
+
+
+                product:{
+
+
+                  select:{
+
+
+                    name:true,
+
+
+                  },
+
+
+                },
+
+
+              },
+
+
+            },
+
+
+          },
+
+
+        },
+
+
+      },
+
+
+    });
+
+
+
+
+
+
+
+  const ranking = users.map(user=>{
+
+
+    const transaction =
+
+      user.transactions.length;
+
+
+
+
+    const revenue =
+
+      user.transactions.reduce(
+
+        (sum,item)=>
+
+          sum +
+
+          Number(item.totalAmount),
+
+        0
+
+      );
+
+
+
+
+
+    const customer =
+
+      new Set(
+
+        user.transactions.map(
+
+          trx => trx.customerId
+
+        )
+
+      ).size;
+
+
+
+
+
+
+    return {
+
+
+      userId:user.id,
+
+
+      name:user.name,
+
+
+      role:user.role,
+
+
+      transaction,
+
+
+      revenue,
+
+
+      customer,
+
+
+    };
+
+
+
+  })
+
+  .sort(
+
+    (a,b)=>
+
+      b.revenue -
+
+      a.revenue
+
+  );
+
+
+
+
+
+
+
+
+
+  // =========================
+  // OVERVIEW
+  // =========================
+
+
+  const totalStaff =
+
+    users.length;
+
+
+
+
+  const totalRevenue =
+
+    ranking.reduce(
+
+      (sum,user)=>
+
+        sum +
+
+        user.revenue,
+
+      0
+
+    );
+
+
+
+
+
+  const totalTransaction =
+
+    ranking.reduce(
+
+      (sum,user)=>
+
+        sum +
+
+        user.transaction,
+
+      0
+
+    );
+
+
+
+
+
+
+
+  const averageRevenue =
+
+    totalStaff > 0
+
+    ?
+
+    totalRevenue /
+
+    totalStaff
+
+    :
+
+    0;
+
+
+
+
+
+
+
+
+
+  // =========================
+  // TOP PRODUCT PER TEAM
+  // =========================
+
+
+  const productMap =
+
+    new Map<
+
+      string,
+
+      {
+
+        userName:string;
+
+        quantity:number;
+
+      }
+
+    >();
+
+
+
+
+
+
+
+  users.forEach(user=>{
+
+
+    user.transactions.forEach(trx=>{
+
+
+      trx.items.forEach(item=>{
+
+
+        const key =
+
+          `${user.name}-${item.product.name}`;
+
+
+
+
+
+        const current =
+
+          productMap.get(key);
+
+
+
+
+
+        productMap.set(
+
+          key,
+
+          {
+
+            userName:user.name,
+
+
+            quantity:
+
+              (
+
+                current?.quantity
+
+                ??
+
+                0
+
+              )
+
+              +
+
+              item.quantity,
+
+          }
+
+        );
+
+
+      });
+
+
+    });
+
+
+  });
+
+
+
+
+
+
+
+
+  const topProducts =
+
+    Array.from(
+
+      productMap.entries()
+
+    )
+
+    .map(([key,value])=>{
+
+
+      const productName =
+
+        key.split("-")[1];
+
+
+
+      return {
+
+
+        userName:value.userName,
+
+
+        productName,
+
+
+        quantity:value.quantity,
+
+
+      };
+
+
+    })
+
+    .sort(
+
+      (a,b)=>
+
+        b.quantity -
+
+        a.quantity
+
+    )
+
+    .slice(
+
+      0,
+
+      10
+
+    );
+
+
+
+
+
+
+
+
+  return {
+
+
+    overview:{
+
+
+      totalStaff,
+
+
+      totalRevenue,
+
+
+      totalTransaction,
+
+
+      averageRevenue,
+
+
+    },
+
+
+
+    ranking,
+
+
+
+    topProducts,
+
+
+  };
+
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/user/team-performance/team-performance.types.ts">
+export interface TeamPerformanceDashboard {
+
+
+  overview: {
+
+    totalStaff:number;
+
+    totalRevenue:number;
+
+    totalTransaction:number;
+
+    averageRevenue:number;
+
+  };
+
+
+
+  ranking: {
+
+    userId:string;
+
+    name:string;
+
+    role:string;
+
+    transaction:number;
+
+    revenue:number;
+
+    customer:number;
+
+  }[];
+
+
+
+  topProducts: {
+
+    userName:string;
+
+    productName:string;
+
+    quantity:number;
+
+  }[];
+
+
+}
+</file>
+
 <file path="src/modules/transaction/transaction.types.ts">
 export interface CreateTransactionItemInput {
 
@@ -24953,43 +24456,6 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 </file>
 
-<file path="package.json">
-{
-  "name": "backend",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@prisma/adapter-mariadb": "^7.10.0",
-    "@prisma/client": "^7.10.0",
-    "bcrypt": "^6.0.0",
-    "jose": "^6.2.12",
-    "jsonwebtoken": "^9.0.3",
-    "next": "16.3.5",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "zod": "^4.6.5"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.5",
-    "prisma": "^7.10.0",
-    "tsx": "^4.23.15",
-    "typescript": "^5"
-  }
-}
-</file>
-
 <file path="prisma7.config.ts">
 import "dotenv/config";
 
@@ -25657,28 +25123,6 @@ export async function PATCH(
 
   }
 
-
-}
-</file>
-
-<file path="src/app/api/health/route.ts">
-import {
-  successResponse,
-} from "@/utils/response";
-
-
-export async function GET(){
-
-  return successResponse(
-
-    {
-      status:"OK",
-      service:"Retail CRM API",
-    },
-
-    "API is running"
-
-  );
 
 }
 </file>
@@ -26594,6 +26038,417 @@ export async function verifyToken(
 
 
   return payload as AuthTokenPayload;
+
+
+
+}
+</file>
+
+<file path="src/modules/dashboard/user/inventory/inventory.service.ts">
+import { prisma } from "@/lib/prisma";
+
+import type { UserDashboardInventory } from "./inventory.types";
+
+// =========================
+// GET USER INVENTORY DASHBOARD
+// =========================
+
+export async function getUserDashboardInventory(): Promise<UserDashboardInventory> {
+  const [
+    products,
+
+    lowStock,
+
+    totalMovement,
+
+    movementData,
+
+    recentActivity,
+
+    stockOutData,
+  ] = await Promise.all([
+    // =========================
+    // PRODUCT STOCK
+    // =========================
+
+    prisma.product.findMany({
+      where: {
+        isActive: true,
+      },
+
+      select: {
+        id: true,
+
+        category: true,
+
+        stock: true,
+
+        price: true,
+      },
+    }),
+
+    // =========================
+    // LOW STOCK
+    // =========================
+
+    prisma.product.count({
+      where: {
+        isActive: true,
+
+        stock: {
+          lte: 10,
+        },
+      },
+    }),
+
+    // =========================
+    // TOTAL INVENTORY MOVEMENT
+    // =========================
+
+    prisma.inventoryTransaction.count(),
+
+    // =========================
+    // MOVEMENT SUMMARY
+    // =========================
+
+    prisma.inventoryTransaction.findMany({
+      select: {
+        type: true,
+
+        quantity: true,
+      },
+    }),
+
+    // =========================
+    // RECENT ACTIVITY
+    // =========================
+
+    prisma.inventoryTransaction.findMany({
+      take: 10,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      select: {
+        productId: true,
+
+        type: true,
+
+        quantity: true,
+
+        stockBefore: true,
+
+        stockAfter: true,
+
+        createdAt: true,
+
+        product: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    }),
+
+    // =========================
+    // FAST MOVING PRODUCT
+    // STOCK OUT
+    // =========================
+
+    prisma.inventoryTransaction.findMany({
+      where: {
+        type: "STOCK_OUT",
+      },
+
+      select: {
+        quantity: true,
+
+        product: {
+          select: {
+            id: true,
+
+            name: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  // =========================
+  // STOCK VALUE
+  // =========================
+
+  const totalStock = products.reduce(
+    (total, item) => total + item.stock,
+
+    0,
+  );
+
+  const totalStockValue = products.reduce(
+    (total, item) => total + item.stock * Number(item.price),
+
+    0,
+  );
+
+  // =========================
+  // STOCK VALUE BY CATEGORY
+  // =========================
+
+  const categoryMap = new Map<
+    string,
+    {
+      totalStock: number;
+
+      stockValue: number;
+    }
+  >();
+
+  products.forEach((item) => {
+    const current = categoryMap.get(item.category) ?? {
+      totalStock: 0,
+
+      stockValue: 0,
+    };
+
+    current.totalStock += item.stock;
+
+    current.stockValue += item.stock * Number(item.price);
+
+    categoryMap.set(
+      item.category,
+
+      current,
+    );
+  });
+
+  const stockValueByCategory = Array.from(categoryMap.entries())
+
+    .map(([category, value]) => ({
+      category,
+
+      ...value,
+    }))
+
+    .sort((a, b) => b.stockValue - a.stockValue);
+
+  // =========================
+  // MOVEMENT PROCESS
+  // =========================
+
+  const movementMap = new Map<
+    string,
+    {
+      quantity: number;
+
+      totalTransaction: number;
+    }
+  >();
+
+  movementData.forEach((item) => {
+    const current = movementMap.get(item.type) ?? {
+      quantity: 0,
+
+      totalTransaction: 0,
+    };
+
+    current.quantity += item.quantity;
+
+    current.totalTransaction += 1;
+
+    movementMap.set(
+      item.type,
+
+      current,
+    );
+  });
+
+  // =========================
+  // FAST MOVING PRODUCT
+  // =========================
+
+  const fastMap = new Map<
+    string,
+    {
+      productId: string;
+
+      productName: string;
+
+      totalOut: number;
+    }
+  >();
+
+  stockOutData.forEach((item) => {
+    const id = item.product.id;
+
+    const current = fastMap.get(id) ?? {
+      productId: id,
+
+      productName: item.product.name,
+
+      totalOut: 0,
+    };
+
+    current.totalOut += item.quantity;
+
+    fastMap.set(
+      id,
+
+      current,
+    );
+  });
+
+  return {
+    overview: {
+      totalStock,
+
+      totalStockValue,
+
+      lowStock,
+
+      totalMovement,
+    },
+
+    movement: Array.from(movementMap.entries())
+
+      .map(([type, value]) => ({
+        type,
+
+        ...value,
+      })),
+
+    recentActivity: recentActivity.map((item) => ({
+      productId: item.productId,
+
+      productName: item.product.name,
+
+      type: item.type,
+
+      quantity: item.quantity,
+
+      stockBefore: item.stockBefore,
+
+      stockAfter: item.stockAfter,
+
+      createdAt: item.createdAt,
+    })),
+
+    fastMovingProducts: Array.from(fastMap.values())
+
+      .sort((a, b) => b.totalOut - a.totalOut)
+
+      .slice(0, 10),
+
+    // =========================
+    // NEW
+    // =========================
+
+    stockValueByCategory,
+  };
+}
+</file>
+
+<file path="src/modules/dashboard/user/inventory/inventory.types.ts">
+// =========================
+// USER DASHBOARD INVENTORY TYPES
+// =========================
+
+
+export interface UserDashboardInventory {
+
+
+  // =========================
+  // INVENTORY OVERVIEW
+  // =========================
+
+  overview: {
+
+    totalStock: number;
+
+    totalStockValue: number;
+
+    lowStock: number;
+
+    totalMovement: number;
+
+  };
+
+
+
+  // =========================
+  // STOCK MOVEMENT
+  // =========================
+
+  movement: {
+
+    type: string;
+
+    quantity: number;
+
+    totalTransaction: number;
+
+  }[];
+
+
+
+  // =========================
+  // RECENT INVENTORY ACTIVITY
+  // =========================
+
+  recentActivity: {
+
+    productId: string;
+
+    productName: string;
+
+    type: string;
+
+    quantity: number;
+
+    stockBefore: number;
+
+    stockAfter: number;
+
+    createdAt: Date;
+
+  }[];
+
+
+
+
+  // =========================
+  // FAST MOVING PRODUCT
+  // =========================
+
+  fastMovingProducts: {
+
+    productId: string;
+
+    productName: string;
+
+    totalOut: number;
+
+  }[];
+
+
+
+
+
+  // =========================
+  // STOCK VALUE BY CATEGORY
+  // NEW IMPROVEMENT
+  // =========================
+
+  stockValueByCategory: {
+
+    category: string;
+
+    totalStock: number;
+
+    stockValue: number;
+
+  }[];
+
 
 
 
@@ -27553,6 +27408,43 @@ export const userIdSchema = z.object({
 export const updateStatusSchema = z.object({
   isActive: z.boolean(),
 });
+</file>
+
+<file path="package.json">
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 2000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "bcrypt": "^6.0.0",
+    "jose": "^6.2.12",
+    "jsonwebtoken": "^9.0.3",
+    "next": "16.3.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5",
+    "prisma": "^7.10.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}
 </file>
 
 <file path="README.md">
